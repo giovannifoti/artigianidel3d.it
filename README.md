@@ -6,7 +6,7 @@ catalogo Supabase e pannello admin autenticato.
 ## Struttura
 
 - `index.html` — vetrina pubblica;
-- `admin.html` — login e gestione prodotti;
+- `admin.html` — login, aggiunta, modifica ed eliminazione prodotti;
 - `assets/` — logo orizzontale, variante chiara, simbolo e avatar Instagram nei formati SVG e PNG;
 - `supabase-schema.sql` — database, Storage e policy RLS;
 - `supabase-migration-price-from.sql` — migrazione per la dicitura “A partire da”;

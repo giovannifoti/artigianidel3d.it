@@ -232,6 +232,12 @@
       position: sticky;
       top: 24px;
       padding: 30px;
+      transition: border-color 180ms ease, box-shadow 180ms ease;
+    }
+
+    .form-panel.is-editing {
+      border-color: rgba(86, 136, 255, 0.42);
+      box-shadow: var(--shadow), 0 0 0 1px rgba(86, 136, 255, 0.12), 0 0 44px rgba(86, 136, 255, 0.08);
     }
 
     .panel-heading {
@@ -499,8 +505,35 @@
       transform: translateY(0);
     }
 
+    .form-actions {
+      display: grid;
+      gap: 10px;
+    }
+
+    .cancel-edit-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(255, 255, 255, 0.045);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 750;
+      transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+    }
+
+    .cancel-edit-button:hover {
+      border-color: rgba(255, 255, 255, 0.24);
+      background: rgba(255, 255, 255, 0.085);
+      transform: translateY(-1px);
+    }
+
     .primary-button:focus-visible,
-    .delete-button:focus-visible,
+    .row-button:focus-visible,
+    .cancel-edit-button:focus-visible,
     .back-link:focus-visible,
     .file-drop:focus-within {
       outline: 3px solid rgba(199, 255, 74, 0.68);
@@ -588,17 +621,40 @@
       -webkit-line-clamp: 2;
     }
 
-    .delete-button {
+    .row-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .row-button {
       min-height: 38px;
       padding: 0 12px;
-      border: 1px solid rgba(255, 93, 115, 0.23);
       border-radius: 10px;
-      background: rgba(255, 93, 115, 0.08);
-      color: #ff8c9c;
       cursor: pointer;
       font-size: 0.73rem;
       font-weight: 700;
       transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .edit-button {
+      border: 1px solid rgba(86, 136, 255, 0.26);
+      background: rgba(86, 136, 255, 0.09);
+      color: #adc2ff;
+    }
+
+    .edit-button:hover {
+      border-color: rgba(86, 136, 255, 0.58);
+      background: rgba(86, 136, 255, 0.18);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .delete-button {
+      border: 1px solid rgba(255, 93, 115, 0.23);
+      background: rgba(255, 93, 115, 0.08);
+      color: #ff8c9c;
     }
 
     .delete-button:hover {
@@ -722,7 +778,8 @@
     }
 
     .primary-button:disabled,
-    .delete-button:disabled,
+    .row-button:disabled,
+    .cancel-edit-button:disabled,
     .logout-button:disabled {
       cursor: wait;
       opacity: 0.55;
@@ -823,9 +880,14 @@
         width: 68px;
       }
 
-      .delete-button {
+      .row-actions {
         grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         width: 100%;
+      }
+
+      .row-button {
         min-height: 42px;
       }
     }
@@ -925,7 +987,7 @@
       <section class="panel form-panel" aria-labelledby="form-title">
         <div class="panel-heading">
           <h2 class="panel-title" id="form-title">Aggiungi un prodotto</h2>
-          <p class="panel-copy">Tutti i campi sono obbligatori.</p>
+          <p class="panel-copy" id="form-helper">Tutti i campi sono obbligatori.</p>
         </div>
 
         <form id="product-form">
@@ -953,7 +1015,7 @@
           </div>
 
           <div class="field">
-            <span class="field-label">Foto Prodotto <span class="required" aria-hidden="true">*</span></span>
+            <span class="field-label">Foto Prodotto <span class="required" id="image-required" aria-hidden="true">*</span></span>
             <label class="file-drop" for="product-image">
               <input id="product-image" name="image" type="file" accept="image/jpeg,image/png,image/webp" required>
               <span class="file-prompt" id="file-prompt">
@@ -968,7 +1030,10 @@
             </label>
           </div>
 
-          <button class="primary-button" id="publish-button" type="submit">Pubblica prodotto <span aria-hidden="true">↗</span></button>
+          <div class="form-actions">
+            <button class="primary-button" id="publish-button" type="submit">Pubblica prodotto <span aria-hidden="true">↗</span></button>
+            <button class="cancel-edit-button" id="cancel-edit-button" type="button" hidden>Annulla modifica</button>
+          </div>
         </form>
 
         <p class="storage-note"><span aria-hidden="true">ⓘ</span><span>Le schede vengono salvate in PostgreSQL e le immagini in Storage. Le policy RLS consentono le modifiche soltanto al tuo account.</span></p>
@@ -1012,7 +1077,19 @@
       currency: "EUR"
     });
 
+    const FORM_COPY = {
+      addTitle: "Aggiungi un prodotto",
+      addHelper: "Tutti i campi sono obbligatori.",
+      addButton: "Pubblica prodotto ↗",
+      addBusy: "Pubblicazione…",
+      editTitle: "Modifica prodotto",
+      editHelper: "Aggiorna i dati del prodotto. La foto è facoltativa: scegline una nuova solo se vuoi sostituirla.",
+      editButton: "Salva modifiche ✓",
+      editBusy: "Salvataggio…"
+    };
+
     let activeUser = null;
+    let editingProduct = null;
     let selectedImageFile = null;
     let selectedImageBase64 = "";
     let pendingAuthMessage = "";
@@ -1024,6 +1101,16 @@
 
     function parsePrice(price) {
       return Number(String(price).replace(/€/g, "").replace(",", ".").trim());
+    }
+
+    function formatPriceInput(price) {
+      const numericPrice = Number(price);
+      if (!Number.isFinite(numericPrice)) return "";
+
+      return numericPrice.toLocaleString("it-IT", {
+        minimumFractionDigits: numericPrice % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2
+      });
     }
 
     function getImageUrl(imagePath) {
@@ -1134,30 +1221,94 @@
     function resetImagePreview() {
       selectedImageFile = null;
       selectedImageBase64 = "";
+      document.getElementById("product-image").value = "";
       document.getElementById("image-preview").removeAttribute("src");
       document.getElementById("image-preview-wrap").classList.remove("visible");
       document.getElementById("file-prompt").hidden = false;
+    }
+
+    function showStoredImagePreview(imagePath) {
+      selectedImageFile = null;
+      selectedImageBase64 = "";
+      document.getElementById("product-image").value = "";
+      document.getElementById("image-preview").src = getImageUrl(imagePath);
+      document.getElementById("image-preview-wrap").classList.add("visible");
+      document.getElementById("file-prompt").hidden = true;
+    }
+
+    function restoreImageSelectionState() {
+      if (editingProduct) {
+        showStoredImagePreview(editingProduct.image_path);
+      } else {
+        resetImagePreview();
+      }
+    }
+
+    function resetProductForm() {
+      const form = document.getElementById("product-form");
+      const imageInput = document.getElementById("product-image");
+      const publishButton = document.getElementById("publish-button");
+
+      editingProduct = null;
+      form.reset();
+      imageInput.required = true;
+      document.querySelector(".form-panel").classList.remove("is-editing");
+      document.getElementById("form-title").textContent = FORM_COPY.addTitle;
+      document.getElementById("form-helper").textContent = FORM_COPY.addHelper;
+      document.getElementById("image-required").hidden = false;
+      document.getElementById("cancel-edit-button").hidden = true;
+      publishButton.disabled = false;
+      publishButton.textContent = FORM_COPY.addButton;
+      resetImagePreview();
+    }
+
+    function startProductEdit(product) {
+      const form = document.getElementById("product-form");
+      const imageInput = document.getElementById("product-image");
+      const formPanel = document.querySelector(".form-panel");
+      const publishButton = document.getElementById("publish-button");
+
+      editingProduct = product;
+      form.elements["title"].value = product.title || "";
+      form.elements["description"].value = product.description || "";
+      form.elements["price"].value = formatPriceInput(product.price);
+      form.elements["priceFrom"].checked = Boolean(product.price_from);
+      imageInput.required = false;
+
+      document.getElementById("form-title").textContent = FORM_COPY.editTitle;
+      document.getElementById("form-helper").textContent = FORM_COPY.editHelper;
+      document.getElementById("image-required").hidden = true;
+      document.getElementById("cancel-edit-button").hidden = false;
+      publishButton.disabled = false;
+      publishButton.textContent = FORM_COPY.editButton;
+      formPanel.classList.add("is-editing");
+      showStoredImagePreview(product.image_path);
+
+      formPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(function () {
+        form.elements["title"].focus({ preventScroll: true });
+      }, 320);
     }
 
     function handleImageSelection(event) {
       const file = event.target.files[0];
 
       if (!file) {
-        resetImagePreview();
+        restoreImageSelectionState();
         return;
       }
 
       if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
         alert("Seleziona un’immagine JPG, PNG o WebP.");
         event.target.value = "";
-        resetImagePreview();
+        restoreImageSelectionState();
         return;
       }
 
       if (file.size > MAX_IMAGE_SIZE) {
         alert("L’immagine supera 5 MB. Scegli un file più leggero.");
         event.target.value = "";
-        resetImagePreview();
+        restoreImageSelectionState();
         return;
       }
 
@@ -1174,7 +1325,7 @@
       reader.onerror = function () {
         alert("Non è stato possibile leggere l’immagine. Riprova.");
         event.target.value = "";
-        resetImagePreview();
+        restoreImageSelectionState();
       };
 
       reader.readAsDataURL(file);
@@ -1204,8 +1355,20 @@
       description.className = "product-description";
       description.textContent = product.description;
 
+      const actions = document.createElement("div");
+      actions.className = "row-actions";
+
+      const editButton = document.createElement("button");
+      editButton.className = "row-button edit-button";
+      editButton.type = "button";
+      editButton.textContent = "Modifica";
+      editButton.setAttribute("aria-label", "Modifica " + product.title);
+      editButton.addEventListener("click", function () {
+        startProductEdit(product);
+      });
+
       const deleteButton = document.createElement("button");
-      deleteButton.className = "delete-button";
+      deleteButton.className = "row-button delete-button";
       deleteButton.type = "button";
       deleteButton.textContent = "Elimina";
       deleteButton.setAttribute("aria-label", "Elimina " + product.title);
@@ -1213,8 +1376,9 @@
         deleteProduct(product, deleteButton);
       });
 
+      actions.append(editButton, deleteButton);
       info.append(name, meta, description);
-      row.append(image, info, deleteButton);
+      row.append(image, info, actions);
       return row;
     }
 
@@ -1286,7 +1450,7 @@
       return activeUser.id + "/" + uniqueId + "." + extensionByType[file.type];
     }
 
-    async function addProduct(event) {
+    async function saveProduct(event) {
       event.preventDefault();
 
       if (!activeUser) {
@@ -1294,7 +1458,9 @@
         return;
       }
 
-      if (!selectedImageFile || !selectedImageBase64) {
+      const isEditing = Boolean(editingProduct);
+
+      if (!isEditing && !selectedImageFile) {
         alert("Seleziona una foto per il prodotto.");
         return;
       }
@@ -1308,47 +1474,82 @@
       }
 
       const publishButton = document.getElementById("publish-button");
-      setButtonBusy(publishButton, true, "Pubblicazione…", "Pubblica prodotto ↗");
+      const idleLabel = isEditing ? FORM_COPY.editButton : FORM_COPY.addButton;
+      const busyLabel = isEditing ? FORM_COPY.editBusy : FORM_COPY.addBusy;
+      const productBeingEdited = editingProduct;
+      let imagePath = productBeingEdited ? productBeingEdited.image_path : "";
+      let uploadedReplacementPath = "";
 
-      const imagePath = createImagePath(selectedImageFile);
-      const { error: uploadError } = await supabaseClient.storage
-        .from(PRODUCT_IMAGES_BUCKET)
-        .upload(imagePath, selectedImageFile, {
-          cacheControl: "3600",
-          contentType: selectedImageFile.type,
-          upsert: false
-        });
+      setButtonBusy(publishButton, true, busyLabel, idleLabel);
 
-      if (uploadError) {
-        console.error("Upload immagine fallito:", uploadError);
-        setButtonBusy(publishButton, false, "Pubblicazione…", "Pubblica prodotto ↗");
-        alert("Non è stato possibile caricare l’immagine. Riprova.");
+      if (selectedImageFile) {
+        uploadedReplacementPath = createImagePath(selectedImageFile);
+
+        const { error: uploadError } = await supabaseClient.storage
+          .from(PRODUCT_IMAGES_BUCKET)
+          .upload(uploadedReplacementPath, selectedImageFile, {
+            cacheControl: "3600",
+            contentType: selectedImageFile.type,
+            upsert: false
+          });
+
+        if (uploadError) {
+          console.error("Upload immagine fallito:", uploadError);
+          setButtonBusy(publishButton, false, busyLabel, idleLabel);
+          alert("Non è stato possibile caricare l’immagine. Riprova.");
+          return;
+        }
+
+        imagePath = uploadedReplacementPath;
+      }
+
+      const productPayload = {
+        title: form.elements["title"].value.trim(),
+        description: form.elements["description"].value.trim(),
+        price: price,
+        price_from: form.elements["priceFrom"].checked,
+        image_path: imagePath
+      };
+
+      const { data, error } = isEditing
+        ? await supabaseClient
+            .from("products")
+            .update(productPayload)
+            .eq("id", productBeingEdited.id)
+            .select("id")
+        : await supabaseClient
+            .from("products")
+            .insert(productPayload)
+            .select("id");
+
+      if (error || !data || data.length === 0) {
+        console.error(isEditing ? "Aggiornamento prodotto fallito:" : "Salvataggio prodotto fallito:", error);
+        if (uploadedReplacementPath) {
+          await supabaseClient.storage.from(PRODUCT_IMAGES_BUCKET).remove([uploadedReplacementPath]);
+        }
+        setButtonBusy(publishButton, false, busyLabel, idleLabel);
+        alert(isEditing ? "Non è stato possibile aggiornare il prodotto. Riprova." : "Non è stato possibile salvare il prodotto. Riprova.");
         return;
       }
 
-      const { error: insertError } = await supabaseClient
-        .from("products")
-        .insert({
-          title: form.elements["title"].value.trim(),
-          description: form.elements["description"].value.trim(),
-          price: price,
-          price_from: form.elements["priceFrom"].checked,
-          image_path: imagePath
-        });
+      if (
+        isEditing &&
+        uploadedReplacementPath &&
+        productBeingEdited.image_path &&
+        productBeingEdited.image_path !== uploadedReplacementPath
+      ) {
+        const { error: storageError } = await supabaseClient.storage
+          .from(PRODUCT_IMAGES_BUCKET)
+          .remove([productBeingEdited.image_path]);
 
-      if (insertError) {
-        console.error("Salvataggio prodotto fallito:", insertError);
-        await supabaseClient.storage.from(PRODUCT_IMAGES_BUCKET).remove([imagePath]);
-        setButtonBusy(publishButton, false, "Pubblicazione…", "Pubblica prodotto ↗");
-        alert("Non è stato possibile salvare il prodotto. Riprova.");
-        return;
+        if (storageError) {
+          console.error("Pulizia vecchia immagine fallita:", storageError);
+        }
       }
 
-      form.reset();
-      resetImagePreview();
-      setButtonBusy(publishButton, false, "Pubblicazione…", "Pubblica prodotto ↗");
+      resetProductForm();
       await loadProducts();
-      alert("Prodotto pubblicato con successo!");
+      alert(isEditing ? "Prodotto aggiornato con successo!" : "Prodotto pubblicato con successo!");
     }
 
     async function deleteProduct(product, button) {
@@ -1380,6 +1581,10 @@
         console.error("Pulizia immagine fallita:", storageError);
       }
 
+      if (editingProduct && editingProduct.id === product.id) {
+        resetProductForm();
+      }
+
       await loadProducts();
     }
 
@@ -1407,7 +1612,8 @@
     document.getElementById("login-form").addEventListener("submit", handleLogin);
     document.getElementById("logout-button").addEventListener("click", handleLogout);
     document.getElementById("product-image").addEventListener("change", handleImageSelection);
-    document.getElementById("product-form").addEventListener("submit", addProduct);
+    document.getElementById("cancel-edit-button").addEventListener("click", resetProductForm);
+    document.getElementById("product-form").addEventListener("submit", saveProduct);
 
     if (supabaseClient) {
       supabaseClient.auth.onAuthStateChange(function (_event, session) {
