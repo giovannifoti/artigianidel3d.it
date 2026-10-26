@@ -1,9 +1,11 @@
+# I segnaposto __SUPABASE_*__ vengono sostituiti da scripts/build.mjs con l'origine del progetto Supabase.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
+  Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://giovannifoti22.goatcounter.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://giovannifoti22.goatcounter.com; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' https://cdn.jsdelivr.net https://gc.zgo.at; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: __SUPABASE_ORIGIN__ https://giovannifoti22.goatcounter.com; connect-src 'self' __SUPABASE_ORIGIN__ __SUPABASE_WS_ORIGIN__ https://giovannifoti22.goatcounter.com; manifest-src 'self'; upgrade-insecure-requests
 
 /admin.html
   Cache-Control: no-store, max-age=0
@@ -11,3 +13,13 @@
 
 /config.js
   Cache-Control: no-cache, max-age=0, must-revalidate
+
+# I file JavaScript hanno l'hash del contenuto nel nome: possono restare in cache a lungo.
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600

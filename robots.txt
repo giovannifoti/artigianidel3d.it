@@ -1,0 +1,6 @@
+# artigianidel3d — https://artigianidel3d.it
+# Il pannello admin non è bloccato qui: resta escluso dall'indice tramite X-Robots-Tag noindex.
+User-agent: *
+Allow: /
+
+Sitemap: https://artigianidel3d.it/sitemap.xml
