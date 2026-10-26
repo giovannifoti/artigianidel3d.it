@@ -114,21 +114,21 @@ function getWhatsAppOrderUrl(product) {
 // Deve restare allineato a createProductCard() in js/site.js.
 function renderProductCard(product, supabaseUrl, formatPrice) {
   const title = escapeHtml(product.title);
-  const priceLabel = `${product.price_from ? "A partire da " : ""}${formatPrice(product.price)}`;
+  const priceFrom = product.price_from ? `<span class="price-from">da</span> ` : "";
 
   return `<article class="product-card">` +
     `<div class="product-media">` +
     `<img class="product-image" src="${escapeHtml(getProductImageUrl(supabaseUrl, product.image_path))}" ` +
-    `alt="${title}, oggetto stampato in 3D da artigianidel3d" width="800" height="600" loading="lazy" decoding="async">` +
-    `<span class="product-badge">Stampa 3D</span>` +
+    `alt="${title}, oggetto stampato in 3D da artigianidel3d" width="800" height="1000" loading="lazy" decoding="async">` +
     `</div>` +
     `<div class="product-body">` +
-    `<div class="product-title-row"><h3 class="product-title">${title}</h3>` +
-    `<span class="product-price">${escapeHtml(priceLabel)}</span></div>` +
+    `<h3 class="product-title"><button class="product-open" type="button" aria-haspopup="dialog">${title}</button></h3>` +
     `<p class="product-description">${escapeHtml(product.description)}</p>` +
-    `<a class="primary-button whatsapp-button" href="${escapeHtml(getWhatsAppOrderUrl(product))}" ` +
-    `target="_blank" rel="noopener noreferrer" aria-label="Ordina via WhatsApp: ${title}">` +
-    `Ordina via WhatsApp<span aria-hidden="true">↗</span></a>` +
+    `<div class="product-footer">` +
+    `<p class="product-price">${priceFrom}${escapeHtml(formatPrice(product.price))}</p>` +
+    `<a class="order-link" href="${escapeHtml(getWhatsAppOrderUrl(product))}" target="_blank" rel="noopener noreferrer" ` +
+    `aria-label="Ordina su WhatsApp: ${title}"><svg class="icon" aria-hidden="true"><use href="#i-chat"></use></svg>Ordina</a>` +
+    `</div>` +
     `</div>` +
     `</article>`;
 }
@@ -199,7 +199,7 @@ async function buildIndex(scriptPaths, supabaseUrl, products) {
 
   if (products && products.length > 0) {
     const cards = products.map((product) => renderProductCard(product, supabaseUrl, formatPrice)).join("");
-    const countLabel = `${products.length} ${products.length === 1 ? "prodotto" : "prodotti"}`;
+    const countLabel = `${products.length} ${products.length === 1 ? "oggetto" : "oggetti"}`;
     html = replaceOnce(html, "<!-- PRODUCTS_HTML -->", cards);
     html = replaceOnce(html, "<!-- PRODUCTS_JSONLD -->", renderProductsJsonLd(products, supabaseUrl));
     html = replaceOnce(

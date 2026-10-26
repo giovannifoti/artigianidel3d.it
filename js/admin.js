@@ -7,6 +7,8 @@ const MAX_SOURCE_IMAGE_SIZE = 25 * 1024 * 1024;
 const MAX_IMAGE_DIMENSION = 1600;
 const WEBP_QUALITY = 0.82;
 const JPEG_QUALITY = 0.85;
+// Sopra questa soglia un'immagine viene proposta per l'ottimizzazione.
+const HEAVY_IMAGE_BYTES = 600 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 const hasSupabaseConfig =
@@ -42,6 +44,7 @@ let selectedImageBase64 = "";
 let pendingAuthMessage = "";
 let currentProducts = [];
 let optimizingImages = false;
+const imageSizes = new Map();
 
 function formatPrice(price) {
   const numericPrice = Number(price);
@@ -346,8 +349,8 @@ function updateOptimizeBox() {
   box.hidden = pending === 0 && !optimizingImages;
   if (!optimizingImages) {
     document.getElementById("optimize-copy").textContent =
-      pending + (pending === 1 ? " immagine non è ancora ottimizzata" : " immagini non sono ancora ottimizzate") +
-      ": convertirle in WebP alleggerisce la vetrina, soprattutto da smartphone.";
+      pending + (pending === 1 ? " immagine pesa" : " immagini pesano") +
+      " più di 600 KB: ottimizzarle alleggerisce la vetrina, soprattutto da smartphone.";
   }
 }
 
@@ -356,6 +359,7 @@ function renderProductList(products) {
   const count = document.getElementById("catalog-count");
   currentProducts = products;
   updateOptimizeBox();
+  measureImageSizes(products);
   list.replaceChildren();
   count.textContent = products.length + " " + (products.length === 1 ? "elemento" : "elementi");
 
@@ -443,7 +447,25 @@ async function optimizeImage(file) {
 }
 
 function needsImageOptimization(product) {
-  return Boolean(product.image_path) && !/\.webp$/i.test(product.image_path);
+  return (imageSizes.get(product.image_path) || 0) > HEAVY_IMAGE_BYTES;
+}
+
+// Legge il peso delle immagini con richieste HEAD, poi aggiorna il riquadro di ottimizzazione.
+async function measureImageSizes(products) {
+  const unknown = products.filter(function (product) {
+    return product.image_path && !imageSizes.has(product.image_path);
+  });
+
+  await Promise.all(unknown.map(async function (product) {
+    try {
+      const response = await fetch(getImageUrl(product.image_path), { method: "HEAD", cache: "no-store" });
+      imageSizes.set(product.image_path, Number(response.headers.get("content-length")) || 0);
+    } catch (error) {
+      console.warn("Peso immagine non disponibile:", error);
+    }
+  }));
+
+  updateOptimizeBox();
 }
 
 async function uploadProductImage(file) {
@@ -466,7 +488,7 @@ async function optimizeExistingImages() {
   if (candidates.length === 0 || optimizingImages) return;
 
   const confirmed = window.confirm(
-    "Convertire " + candidates.length + " immagini in WebP ottimizzato? Le foto originali verranno sostituite."
+    "Ottimizzare " + candidates.length + " immagini? Le foto originali verranno sostituite con versioni più leggere."
   );
   if (!confirmed) return;
 

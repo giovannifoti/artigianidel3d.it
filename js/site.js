@@ -3,6 +3,8 @@ const SUPABASE_URL = String(APP_CONFIG.supabaseUrl || "");
 const SUPABASE_PUBLISHABLE_KEY = String(APP_CONFIG.supabasePublishableKey || "");
 const PRODUCT_IMAGES_BUCKET = "product-images";
 const WHATSAPP_NUMBER = "393446498901";
+// Numero minimo di schede visibili a collezione chiusa (vedi le regole .is-collapsed nel CSS).
+const MIN_COLLAPSED_PRODUCTS = 6;
 
 const hasSupabaseConfig =
   SUPABASE_URL.startsWith("https://") &&
@@ -51,6 +53,32 @@ function getWhatsAppOrderUrl(product) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
+function createIcon(symbolId) {
+  const namespace = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(namespace, "svg");
+  svg.setAttribute("class", "icon");
+  svg.setAttribute("aria-hidden", "true");
+  const use = document.createElementNS(namespace, "use");
+  use.setAttribute("href", `#${symbolId}`);
+  svg.append(use);
+  return svg;
+}
+
+function createPriceElement(product, className) {
+  const price = document.createElement("p");
+  price.className = className;
+
+  if (product.price_from) {
+    const from = document.createElement("span");
+    from.className = "price-from";
+    from.textContent = "da";
+    price.append(from, " ");
+  }
+
+  price.append(formatPrice(product.price));
+  return price;
+}
+
 // Il markup deve restare allineato a renderProductCard() in scripts/build.mjs,
 // che pre-genera le stesse schede nell'HTML statico per i motori di ricerca.
 function createProductCard(product) {
@@ -62,51 +90,59 @@ function createProductCard(product) {
 
   const image = document.createElement("img");
   image.className = "product-image";
-  image.src = getImageUrl(product.image_path);
-  image.alt = `${product.title}, oggetto stampato in 3D da artigianidel3d`;
-  image.width = 800;
-  image.height = 600;
+  // loading va impostato prima di src, altrimenti il browser scarica subito l'immagine.
   image.loading = "lazy";
   image.decoding = "async";
-
-  const badge = document.createElement("span");
-  badge.className = "product-badge";
-  badge.textContent = "Stampa 3D";
-  media.append(image, badge);
+  image.width = 800;
+  image.height = 1000;
+  image.alt = `${product.title}, oggetto stampato in 3D da artigianidel3d`;
+  image.src = getImageUrl(product.image_path);
+  media.append(image);
 
   const body = document.createElement("div");
   body.className = "product-body";
 
-  const titleRow = document.createElement("div");
-  titleRow.className = "product-title-row";
-
   const title = document.createElement("h3");
   title.className = "product-title";
-  title.textContent = product.title;
-
-  const price = document.createElement("span");
-  price.className = "product-price";
-  price.textContent = `${product.price_from ? "A partire da " : ""}${formatPrice(product.price)}`;
+  const openButton = document.createElement("button");
+  openButton.className = "product-open";
+  openButton.type = "button";
+  openButton.setAttribute("aria-haspopup", "dialog");
+  openButton.textContent = product.title;
+  title.append(openButton);
 
   const description = document.createElement("p");
   description.className = "product-description";
   description.textContent = product.description;
 
+  const footer = document.createElement("div");
+  footer.className = "product-footer";
+
   const link = document.createElement("a");
-  link.className = "primary-button whatsapp-button";
+  link.className = "order-link";
   link.href = getWhatsAppOrderUrl(product);
   link.target = "_blank";
   link.rel = "noopener noreferrer";
-  link.setAttribute("aria-label", `Ordina via WhatsApp: ${product.title}`);
-  const arrow = document.createElement("span");
-  arrow.setAttribute("aria-hidden", "true");
-  arrow.textContent = "↗";
-  link.append("Ordina via WhatsApp", arrow);
+  link.setAttribute("aria-label", `Ordina su WhatsApp: ${product.title}`);
+  link.append(createIcon("i-chat"), "Ordina");
 
-  titleRow.append(title, price);
-  body.append(titleRow, description, link);
+  footer.append(createPriceElement(product, "product-price"), link);
+  body.append(title, description, footer);
   article.append(media, body);
   return article;
+}
+
+function updateCollectionToggle(productCount) {
+  const grid = document.getElementById("product-grid");
+  const toggle = document.getElementById("collection-toggle");
+  const fitsCollapsed = productCount <= MIN_COLLAPSED_PRODUCTS;
+
+  toggle.hidden = fitsCollapsed;
+  if (fitsCollapsed) grid.classList.remove("is-collapsed");
+
+  const expanded = !grid.classList.contains("is-collapsed");
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.textContent = expanded ? "Mostra meno" : `Mostra tutta la collezione (${productCount})`;
 }
 
 function renderState(titleText, copyText, options = {}) {
@@ -131,7 +167,7 @@ function renderState(titleText, copyText, options = {}) {
 
   if (options.retry) {
     const retryButton = document.createElement("button");
-    retryButton.className = "primary-button state-action";
+    retryButton.className = "button button-outline";
     retryButton.type = "button";
     retryButton.textContent = "Riprova";
     retryButton.addEventListener("click", loadProducts);
@@ -139,23 +175,24 @@ function renderState(titleText, copyText, options = {}) {
   }
 
   grid.replaceChildren(state);
-  count.textContent = options.loading ? "Caricamento" : "0 prodotti";
+  count.textContent = "";
+  updateCollectionToggle(0);
 }
 
 function renderProducts(products) {
   const grid = document.getElementById("product-grid");
   const count = document.getElementById("product-count");
-  grid.replaceChildren();
-  count.textContent = `${products.length} ${products.length === 1 ? "prodotto" : "prodotti"}`;
 
   if (products.length === 0) {
-    renderState("Nuove forme in arrivo.", "La collezione è in aggiornamento. Torna presto a trovarci.");
+    renderState("Nuove forme in arrivo.", "La collezione è in aggiornamento. Intanto puoi chiederci un oggetto su misura.");
     return;
   }
 
   const fragment = document.createDocumentFragment();
   products.forEach((product) => fragment.append(createProductCard(product)));
-  grid.append(fragment);
+  grid.replaceChildren(fragment);
+  count.textContent = `${products.length} ${products.length === 1 ? "oggetto" : "oggetti"}`;
+  updateCollectionToggle(products.length);
 }
 
 async function loadProducts() {
@@ -192,7 +229,79 @@ async function loadProducts() {
   renderProducts(data || []);
 }
 
+// La scheda di dettaglio legge i dati dalla card, così funziona sia con le schede
+// pre-generate sia con quelle create dopo il caricamento live.
+function openProductDialog(card) {
+  const dialog = document.getElementById("product-dialog");
+  const cardImage = card.querySelector(".product-image");
+  const dialogImage = document.getElementById("dialog-image");
+
+  dialogImage.src = cardImage.currentSrc || cardImage.src;
+  dialogImage.alt = cardImage.alt;
+  document.getElementById("dialog-title").textContent = card.querySelector(".product-title").textContent;
+  document.getElementById("dialog-description").textContent = card.querySelector(".product-description").textContent;
+  document.getElementById("dialog-order").href = card.querySelector(".order-link").href;
+
+  const price = card.querySelector(".product-price").cloneNode(true);
+  document.getElementById("dialog-price").replaceChildren(...price.childNodes);
+
+  dialog.showModal();
+}
+
+function setupProductDialog() {
+  const grid = document.getElementById("product-grid");
+  const dialog = document.getElementById("product-dialog");
+
+  grid.addEventListener("click", (event) => {
+    const trigger = event.target.closest(".product-open, .product-media");
+    if (!trigger) return;
+    openProductDialog(trigger.closest(".product-card"));
+  });
+
+  document.getElementById("dialog-close").addEventListener("click", () => dialog.close());
+
+  // Un clic sullo sfondo oscurato chiude la scheda.
+  dialog.addEventListener("click", (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+}
+
+function setupCollectionToggle() {
+  const grid = document.getElementById("product-grid");
+  const toggle = document.getElementById("collection-toggle");
+
+  toggle.addEventListener("click", () => {
+    const collapsing = !grid.classList.contains("is-collapsed");
+    grid.classList.toggle("is-collapsed");
+    updateCollectionToggle(grid.querySelectorAll(".product-card").length);
+    if (collapsing) document.getElementById("collezione").scrollIntoView({ block: "start" });
+  });
+
+  updateCollectionToggle(grid.querySelectorAll(".product-card").length);
+}
+
+// Su smartphone il pulsante fisso compare dopo la prima schermata e sparisce sull'invito finale.
+function setupMobileCta() {
+  if (!("IntersectionObserver" in window)) return;
+
+  const watched = [document.querySelector(".hero"), document.querySelector(".cta-panel")];
+  const visible = new Set();
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) visible.add(entry.target);
+      else visible.delete(entry.target);
+    });
+    document.body.classList.toggle("show-mobile-cta", visible.size === 0);
+  });
+
+  watched.forEach((element) => observer.observe(element));
+}
+
 document.getElementById("current-year").textContent = new Date().getFullYear();
+setupProductDialog();
+setupCollectionToggle();
+setupMobileCta();
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden && Date.now() - lastCatalogUpdate > 60000) loadProducts();
 });

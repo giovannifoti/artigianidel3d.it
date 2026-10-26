@@ -48,6 +48,24 @@ esegui anche `supabase-migration-price-from.sql` nel SQL Editor. La migrazione
 aggiunge l'opzione “A partire da” senza modificare o eliminare i prodotti già
 presenti.
 
+### Adeguamento prezzi del 10% (ottobre 2026)
+
+I prezzi del catalogo si trovano solo nella colonna `price` della tabella
+`public.products`: homepage, schede, messaggi WhatsApp e dati strutturati per
+Google li leggono da lì. Per applicare l'aumento del 10%:
+
+1. apri **SQL Editor > New query**, incolla tutto
+   `supabase-migration-prezzi-2026-10.sql` e premi **Run**;
+2. controlla la tabella di riepilogo: ogni riga deve riportare “aggiornato”;
+3. su Netlify avvia un nuovo deploy (**Deploys > Trigger deploy > Deploy site**)
+   per aggiornare anche la copia del catalogo inclusa nell'HTML e nei dati per
+   Google. Il sito mostra comunque i nuovi prezzi ai visitatori subito dopo il
+   passaggio 1.
+
+Il file si può eseguire più volte senza effetti: l'aumento resta registrato in
+`public.price_adjustments` e ogni prodotto cambia solo se ha ancora il prezzo
+di partenza previsto. In fondo al file c'è la query per annullarlo.
+
 ## 3. Crea il tuo account amministratore
 
 1. Apri **Authentication > Users**.
