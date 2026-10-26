@@ -104,6 +104,9 @@ Correzioni implementate:
 |---|---|---|---|---|
 | Sito online prima delle modifiche | 83 | 95 | 100 | 100 |
 | Nuova versione (server locale) | 91–96 | 100 | 100 | 100 |
+| **Sito online dopo il deploy** | **96** | **100** | **100** | **100** |
+
+  Sul sito online dopo il deploy: LCP da 3,6 s a 2,5 s, CLS da 0,053 a 0. Le misure non includono ancora l'ottimizzazione delle foto già pubblicate.
 
   La misura locale è prudente: il server di prova non comprime i file, mentre Netlify sì. Il punteggio SEO era già 100 anche prima, perché Lighthouse controlla solo i requisiti tecnici di base, non la pertinenza dei contenuti per le ricerche locali.
 
@@ -120,11 +123,19 @@ Correzioni implementate:
 
 ## 7. Stato del commit e del push
 
-Vedi la sezione "Esito della pubblicazione" in fondo, aggiornata dopo il push.
+- Commit `e386d32` "Audit sicurezza, SEO locale e prestazioni" pubblicato su `origin/main` (push normale, senza force).
+- Tag di ripristino `pre-audit-2026-10-26` pubblicato su GitHub. Per tornare alla versione precedente: `git revert e386d32` (oppure ripristina dal tag).
 
 ## 8. Stato del deploy Netlify
 
-Vedi la sezione "Esito della pubblicazione" in fondo.
+Deploy Netlify **completato e verificato** circa 30 secondi dopo il push. Controlli sul sito online:
+
+- `/` → 200, nuovo title, 24 schede prodotto e 2 blocchi JSON-LD nell'HTML (la build su Netlify ha letto correttamente il catalogo);
+- `/robots.txt` e `/sitemap.xml` → 200, con i tipi di contenuto corretti; `/pagina-inesistente` → 404 con la pagina personalizzata;
+- header online: nuova CSP senza `'unsafe-inline'` per gli script e limitata al progetto Supabase, `Cross-Origin-Opener-Policy`, HSTS; `js/site.<hash>.js` con cache `immutable`; `/admin.html` con `X-Robots-Tag: noindex`;
+- nel browser: nessun errore in console né violazione CSP, librerie Supabase e GoatCounter caricate con SRI, 24 immagini caricate, pannello admin funzionante fino alla schermata di login.
+
+Non ho accesso alla dashboard Netlify: lo stato del deploy è verificato dal contenuto effettivamente servito dal dominio.
 
 ## 9. Google Search Console: operazioni da completare
 
@@ -148,9 +159,3 @@ Richiedono il tuo account Google e non posso eseguirle io:
 7. **Build hook Netlify** chiamato dopo le modifiche al catalogo (o una ricostruzione giornaliera), per tenere aggiornato lo snapshot dei prodotti nell'HTML.
 8. **Font sul sito** (Manrope in WOFF2) per eliminare la dipendenza da Google Fonts e migliorare il primo rendering.
 9. Valuta **pagine prodotto singole** con URL propri: oggi tutti i prodotti stanno nella home e non possono posizionarsi singolarmente.
-
----
-
-## Esito della pubblicazione
-
-_Aggiornato dopo il push._
