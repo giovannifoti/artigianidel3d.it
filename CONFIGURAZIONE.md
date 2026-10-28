@@ -66,6 +66,11 @@ Il file si può eseguire più volte senza effetti: l'aumento resta registrato in
 `public.price_adjustments` e ogni prodotto cambia solo se ha ancora il prezzo
 di partenza previsto. In fondo al file c'è la query per annullarlo.
 
+Dopo l'aumento, `supabase-migration-arrotondamento-2026-10.sql` porta ogni
+prezzo al multiplo di 0,50 € successivo (4,40 → 4,50; 6,60 → 7,00). Si esegue
+allo stesso modo, solo dopo il file dell'aumento, e anche questo non ha effetti
+se ripetuto. Al termine avvia di nuovo un deploy su Netlify.
+
 ## 3. Crea il tuo account amministratore
 
 1. Apri **Authentication > Users**.
