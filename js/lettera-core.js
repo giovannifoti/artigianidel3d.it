@@ -92,17 +92,19 @@
   const M = {
     letterHeight: 186,
     letterDepth: 30,
-    nameMaxHeight: 37,
-    nameMinWidth: 180,
+    nameMaxHeight: 42,
+    nameMinWidth: 190,
     namePosition: 0.52,
-    nameDepth: 6,
+    nameDepth: 10,
+    nameInset: 2,
     nameThicken: 0.3,
     decorationDepth: 1.2,
     baseHeight: 17,
-    baseMargin: 22,
+    baseMargin: 10,
+    baseMaxDiameter: 250,
     baseChamfer: 2,
     slotDepth: 3,
-    characterHeight: 87,
+    characterHeight: 62,
     characterGap: 3,
     characterOffset: 12,
     characterFront: 31,
@@ -249,18 +251,26 @@
     const characterX = -W / 2 + M.characterOffset;
     const characterY = -T / 2 - M.characterGap - M.characterBack * characterScale;
 
-    const baseFront = -T / 2 - M.baseMargin - (withCharacter
-      ? M.characterGap + (M.characterFront + M.characterBack) * characterScale - M.baseMargin * 0.4
-      : 0);
-    const baseBack = T / 2 + M.baseMargin;
-    const baseCenterY = (baseFront + baseBack) / 2;
-    const baseB = (baseBack - baseFront) / 2;
-    const semiAxisX = (x, y) => x / Math.sqrt(1 - (y / baseB) ** 2);
-    const baseForLetter = semiAxisX(W / 2 + M.baseMargin * 0.6, Math.max(Math.abs(T / 2 - baseCenterY), Math.abs(-T / 2 - baseCenterY)));
-    const baseForCharacter = withCharacter
-      ? semiAxisX(Math.abs(characterX) + M.characterHalfWidth * characterScale + 6, Math.abs(characterY - baseCenterY))
-      : 0;
-    const baseA = Math.max(baseForLetter, baseForCharacter, baseB * 1.25);
+    // Base rotonda: il cerchio più piccolo che contiene lettera e personaggio (vedi raggio_base).
+    const radiusFor = (yc) => Math.max(
+      Math.hypot(W / 2 + M.baseMargin, T / 2 + Math.abs(yc) + M.baseMargin),
+      withCharacter
+        ? Math.hypot(Math.abs(characterX) + M.characterHalfWidth * characterScale,
+          Math.abs(characterY - M.characterFront * characterScale - yc)) + M.baseMargin * 0.6
+        : 0,
+      H * 0.4
+    );
+    let baseRadius = Infinity;
+    let baseCenterY = 0;
+    for (let y = -60; y <= 0; y += 1) {
+      const radius = radiusFor(y);
+      if (radius < baseRadius) {
+        baseRadius = radius;
+        baseCenterY = y;
+      }
+    }
+    const baseB = Math.min(baseRadius, M.baseMaxDiameter / 2);
+    const baseA = Math.max(baseB, W / 2 + 4);
 
     return {
       letterBox,
@@ -283,7 +293,7 @@
       baseB,
       baseCenterY,
       letterZ: M.baseHeight - M.slotDepth,
-      baseDiagonal: 2 * Math.sqrt((baseA ** 2 + baseB ** 2) / 2)
+      baseDiameter: 2 * baseA
     };
   }
 

@@ -2,7 +2,9 @@
 
 `lettera-nome.scad` è il modello originale di artigianidel3d da cui escono sia
 l'anteprima 3D del configuratore (`/lettera-personalizzata`) sia i file di stampa.
-L'oggetto finito è alto 20 cm: base 17 mm, lettera 186 mm incastrata per 3 mm.
+L'oggetto finito è alto 20 cm: base rotonda alta 17 mm, lettera 186 mm incastrata
+per 3 mm, nome in corsivo spesso 10 mm che entra per 2 mm in una scanalatura
+scavata nella lettera, personaggio alto 62 mm.
 
 Il sorgente non viene pubblicato nel sito: lo usa solo la funzione Netlify
 `netlify/functions/lettera.mjs`, con la build WebAssembly ufficiale di OpenSCAD
@@ -33,13 +35,14 @@ conferma "oggetto singolo con più parti" e assegna i filamenti.
 
 | File | Contenuto e stampa |
 | --- | --- |
-| `1-lettera-e-decorazioni` | Lettera sdraiata, con le decorazioni (1,2 mm) sulla faccia superiore. |
-| `2-nome` | Nome in corsivo sdraiato, da incollare sulla lettera poco sopra metà altezza. |
+| `1-lettera-e-decorazioni` | Lettera sdraiata, con le decorazioni (1,2 mm) sulla faccia superiore e la scanalatura del nome (2 mm, gioco 0,2 mm). |
+| `2-nome` | Nome in corsivo sdraiato (10 mm): si infila nella scanalatura della lettera e si fissa con una goccia di colla. |
 | `3-base` | Base con la sede della lettera (3 mm, gioco 0,25 mm) e il logo inciso sotto, già specchiato. Con `logo = "intarsio"` il logo diventa un secondo oggetto a filo, per stamparlo in un altro colore. |
 | `4-personaggio` | Corpo, dettagli bianchi, cuore e occhi. Serve il supporto ad albero sotto testa e braccia. Si incolla davanti alla lettera, a sinistra. |
 
-Le lettere larghe (M, W) hanno basi lunghe fino a circa 30 cm: il pannello
-avvisa quando la base va messa in diagonale sul piatto da 256 mm.
+La base è il cerchio più piccolo che contiene lettera e personaggio (circa 17 cm
+per una S). Arriva al massimo a 25 cm di diametro, quindi entra sempre nel piatto
+da 256 mm; solo con lettere molto larghe diventa leggermente ovale.
 
 ## Cosa modificare e dove
 

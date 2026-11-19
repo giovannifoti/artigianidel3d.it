@@ -112,10 +112,10 @@
     const layout = Core.computeLayout(params.config, { letterBox: params.letterBox, nameBox: params.nameBox });
     const base = `${Math.round(layout.baseA * 2)} × ${Math.round(layout.baseB * 2)} mm`;
     const letter = `${Math.round(layout.W)} × ${Math.round(layout.H)} mm`;
-    const tooLong = layout.baseA * 2 > 250;
+    const tooLong = layout.baseDiameter > 254;
     return h("p", { className: tooLong ? "request-size is-warning" : "request-size" }, [
       `Lettera ${letter} · base ${base}`,
-      tooLong ? (layout.baseDiagonal <= 250 ? " · la base va messa in diagonale sul piatto" : " · la base non entra nel piatto: va divisa") : ""
+      tooLong ? " · la base non entra nel piatto da 256 mm" : ""
     ]);
   }
 

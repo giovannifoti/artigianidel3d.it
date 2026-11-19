@@ -103,13 +103,24 @@ before update on public.letter_requests
 for each row execute function public.set_updated_at();
 
 -- -----------------------------------------------------------------------------
--- 4. Notifica Telegram dopo l'inserimento
+-- 4. Notifica Telegram
 --    Nel messaggio non ci sono telefono ed email: si leggono nel pannello admin.
+--    Ogni minuto un controllo (pg_cron) rimanda le notifiche non arrivate
+--    (timeout, errori di rete), fino a 5 tentativi per richiesta.
 --    Un errore della notifica non blocca mai il salvataggio della richiesta.
 -- -----------------------------------------------------------------------------
 
-create or replace function public.notify_letter_request()
-returns trigger
+create extension if not exists pg_cron with schema pg_catalog;
+
+alter table public.letter_requests
+  add column if not exists notify_request_id bigint,
+  add column if not exists notify_attempts integer not null default 0,
+  add column if not exists notify_last_attempt timestamptz,
+  add column if not exists notified_at timestamptz;
+
+-- Invia il messaggio e restituisce l'id della chiamata pg_net (null se mancano i segreti).
+create or replace function public.send_letter_notification(request public.letter_requests)
+returns bigint
 language plpgsql
 security definer
 set search_path = ''
@@ -123,23 +134,41 @@ begin
   select decrypted_secret into chat_id from vault.decrypted_secrets where name = 'telegram_chat_id';
 
   if bot_token is null or chat_id is null then
-    return new;
+    return null;
   end if;
 
   message := format(
     E'🧸 Nuova richiesta: lettera con nome\n%s · versione %s · %s €\nDa: %s\n\nContatti e file 3D nel pannello:\nhttps://artigianidel3d.it/admin.html',
-    new.config->>'name',
-    new.config->>'version',
-    to_char(new.price, 'FM999990'),
-    split_part(new.customer_name, ' ', 1)
+    request.config->>'name',
+    request.config->>'version',
+    to_char(request.price, 'FM999990'),
+    split_part(request.customer_name, ' ', 1)
   );
 
-  perform net.http_post(
+  return net.http_post(
     url := 'https://api.telegram.org/bot' || bot_token || '/sendMessage',
     body := jsonb_build_object('chat_id', chat_id, 'text', message, 'disable_web_page_preview', true),
-    headers := '{"Content-Type": "application/json"}'::jsonb
+    headers := '{"Content-Type": "application/json"}'::jsonb,
+    timeout_milliseconds := 20000
   );
+end;
+$$;
 
+create or replace function public.notify_letter_request()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  call_id bigint;
+begin
+  call_id := public.send_letter_notification(new);
+  update public.letter_requests
+  set notify_request_id = call_id,
+      notify_attempts = case when call_id is null then 0 else 1 end,
+      notify_last_attempt = now()
+  where id = new.id;
   return new;
 exception
   when others then
@@ -152,8 +181,57 @@ create trigger letter_requests_notify
 after insert on public.letter_requests
 for each row execute function public.notify_letter_request();
 
+-- Controlla l'esito delle ultime notifiche e rimanda quelle fallite.
+create or replace function public.retry_letter_notifications()
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  request public.letter_requests;
+  response_status integer;
+  response_error text;
+  call_id bigint;
+begin
+  for request in
+    select * from public.letter_requests
+    where notified_at is null
+      and notify_attempts < 5
+      and created_at > now() - interval '2 days'
+  loop
+    response_status := null;
+    response_error := null;
+    if request.notify_request_id is not null then
+      select status_code, error_msg into response_status, response_error
+      from net._http_response where id = request.notify_request_id;
+    end if;
+
+    if response_status = 200 then
+      update public.letter_requests set notified_at = now() where id = request.id;
+    elsif request.notify_request_id is null
+      or response_status is not null
+      or response_error is not null
+      or request.notify_last_attempt < now() - interval '3 minutes' then
+      call_id := public.send_letter_notification(request);
+      if call_id is not null then
+        update public.letter_requests
+        set notify_request_id = call_id,
+            notify_attempts = notify_attempts + 1,
+            notify_last_attempt = now()
+        where id = request.id;
+      end if;
+    end if;
+  end loop;
+end;
+$$;
+
+select cron.schedule('notifiche-richieste-lettere', '* * * * *', 'select public.retry_letter_notifications()');
+
 revoke all on function public.prepare_letter_request() from public, anon, authenticated;
 revoke all on function public.notify_letter_request() from public, anon, authenticated;
+revoke all on function public.send_letter_notification(public.letter_requests) from public, anon, authenticated;
+revoke all on function public.retry_letter_notifications() from public, anon, authenticated;
 
 -- -----------------------------------------------------------------------------
 -- 5. Permessi e Row Level Security

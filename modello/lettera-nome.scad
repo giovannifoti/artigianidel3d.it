@@ -44,21 +44,27 @@ colore_logo = "#2b2930";
 // Altezza totale dell'oggetto: altezza_base - profondita_incastro + altezza_lettera = 200 mm
 altezza_lettera = 186;
 spessore_lettera = 30;
-altezza_max_nome = 37;
-// 0 = automatica: almeno 180 mm, di più sulle lettere larghe
+altezza_max_nome = 42;
+// 0 = automatica: almeno 190 mm, di più sulle lettere larghe
 larghezza_max_nome = 0;
 // Centro del nome sull'altezza della lettera (0 = fondo, 1 = cima)
 posizione_nome = 0.52;
-spessore_nome = 6;
+// Spessore totale del nome: i primi incasso_nome mm entrano nella scanalatura della lettera
+spessore_nome = 10;
+incasso_nome = 2;
+tolleranza_nome = 0.2;
 // Irrobustisce i tratti sottili del corsivo
 ispessimento_nome = 0.3;
 spessore_decorazioni = 1.2;
 altezza_base = 17;
-margine_base = 22;
+// Spazio minimo tra lettera (o personaggio) e bordo della base
+margine_base = 10;
+// La base è rotonda; oltre questo diametro diventa leggermente ovale (piatto da 256 mm)
+diametro_max_base = 250;
 smusso_base = 2;
 profondita_incastro = 3;
 tolleranza_incastro = 0.25;
-altezza_personaggio = 87;
+altezza_personaggio = 62;
 
 /* [Logo sotto la base] */
 logo = "inciso"; // [inciso, intarsio, nessuno]
@@ -78,14 +84,12 @@ nome_bbox = [0.034, -0.008, 4.141, 0.94];
 // [tipo, u, v, raggio, rotazione]: u e v da 0 a 1 sul riquadro della lettera,
 // raggio in frazione dell'altezza della lettera
 decorazioni = [
-  ["mongolfiera", 0.8397, 0.3131, 0.0798, 0],
+  ["mongolfiera", 0.8576, 0.2566, 0.0798, 0],
   ["nuvola", 0.1514, 0.7445, 0.08, 0],
-  ["nuvola", 0.8249, 0.1589, 0.0545, 0],
-  ["stella", 0.2113, 0.8948, 0.0367, 5],
-  ["stella", 0.873, 0.8985, 0.0284, -10],
-  ["stella", 0.7371, 0.081, 0.0284, 18],
-  ["stella", 0.6754, 0.3714, 0.0284, 19],
-  ["stella", 0.3058, 0.6628, 0.025, 5]
+  ["nuvola", 0.2182, 0.8817, 0.0422, 0],
+  ["stella", 0.7641, 0.1093, 0.0367, -12],
+  ["stella", 0.8584, 0.8994, 0.0323, 13],
+  ["stella", 0.6967, 0.3582, 0.0284, -11]
 ];
 
 /* [Hidden] */
@@ -102,7 +106,7 @@ W = (lettera_bbox[2] - lettera_bbox[0]) * kL;
 
 nome_w_em = nome_bbox[2] - nome_bbox[0];
 nome_h_em = nome_bbox[3] - nome_bbox[1];
-LARGHEZZA_NOME = larghezza_max_nome > 0 ? larghezza_max_nome : max(180, W * 0.95);
+LARGHEZZA_NOME = larghezza_max_nome > 0 ? larghezza_max_nome : max(190, W * 0.95);
 kN = min(altezza_max_nome / nome_h_em, LARGHEZZA_NOME / nome_w_em);
 NH = nome_h_em * kN;
 
@@ -119,23 +123,25 @@ GAP_PERSONAGGIO = 3;
 PERS_X = -W / 2 + 12;
 PERS_Y = -T / 2 - GAP_PERSONAGGIO - P_RETRO * sP;
 
-// Base ellittica: deve contenere la lettera con il margine e, se c'è, il personaggio
-BASE_FRONTE = -T / 2 - margine_base - (con_personaggio ? GAP_PERSONAGGIO + (P_FRONTE + P_RETRO) * sP - margine_base * 0.4 : 0);
-BASE_RETRO = T / 2 + margine_base;
-BASE_YC = (BASE_FRONTE + BASE_RETRO) / 2;
-BASE_B = (BASE_RETRO - BASE_FRONTE) / 2;
-function semiasse_x(x, y) = x / sqrt(1 - pow(y / BASE_B, 2));
-BASE_A_LETTERA = semiasse_x(W / 2 + margine_base * 0.6, max(abs(T / 2 - BASE_YC), abs(-T / 2 - BASE_YC)));
-BASE_A_PERS = con_personaggio
-  ? semiasse_x(abs(PERS_X) + P_MEZZA_LARGH * sP + 6, abs(PERS_Y - BASE_YC))
-  : 0;
-BASE_A = max(BASE_A_LETTERA, BASE_A_PERS, BASE_B * 1.25);
+// Base rotonda: il cerchio più piccolo che contiene lettera e personaggio con il margine.
+// Il centro si sposta in avanti quanto serve per fare spazio al personaggio.
+function raggio_base(yc) = max(
+  norm([W / 2 + margine_base, T / 2 + abs(yc) + margine_base]),
+  con_personaggio
+    ? norm([abs(PERS_X) + P_MEZZA_LARGH * sP, abs(PERS_Y - P_FRONTE * sP - yc)]) + margine_base * 0.6
+    : 0,
+  H * 0.4
+);
+RAGGI_BASE = [for (y = [-60 : 1 : 0]) raggio_base(y)];
+RAGGIO_BASE = min(RAGGI_BASE);
+BASE_YC = [for (y = [-60 : 1 : 0]) if (raggio_base(y) == RAGGIO_BASE) y][0];
+BASE_B = min(RAGGIO_BASE, diametro_max_base / 2);
+BASE_A = max(BASE_B, W / 2 + 4);
 
 Z_LETTERA = altezza_base - profondita_incastro;
 
 // Ingombro della base ruotata di 45°: deve stare sul piatto da 256 mm
-INGOMBRO_BASE_DIAGONALE = 2 * sqrt((pow(BASE_A, 2) + pow(BASE_B, 2)) / 2);
-if (INGOMBRO_BASE_DIAGONALE > 250)
+if (2 * BASE_A > 254)
   echo(str("ATTENZIONE: la base misura ", round(2 * BASE_A), " x ", round(2 * BASE_B), " mm e non entra nel piatto"));
 
 // ---------------------------------------------------------------- Forme 2D
@@ -282,14 +288,28 @@ module logo2d() {
 
 // ---------------------------------------------------------------- Pezzi della lettera
 
-module lettera3d() linear_extrude(T) lettera2d();
+// Impronta del nome sulla lettera (stesso sistema di coordinate della lettera)
+module impronta_nome2d(margine = 0) {
+  translate([W / 2, posizione_nome * H]) offset(r = margine) nome2d();
+}
+
+// Lettera con la scanalatura in cui si incastra il nome
+module lettera3d() {
+  difference() {
+    linear_extrude(T) lettera2d();
+    translate([0, 0, T - incasso_nome]) linear_extrude(incasso_nome + 1) impronta_nome2d(tolleranza_nome);
+  }
+}
 
 module decorazioni3d() {
   if (decorata && len(decorazioni) > 0)
     translate([0, 0, T]) linear_extrude(spessore_decorazioni)
-      intersection() {
-        decorazioni2d();
-        offset(delta = -0.4) lettera2d();
+      difference() {
+        intersection() {
+          decorazioni2d();
+          offset(delta = -0.4) lettera2d();
+        }
+        impronta_nome2d(1);
       }
 }
 
@@ -456,7 +476,7 @@ module anteprima() {
   in_piedi() {
     color(colore_lettera) lettera3d();
     color(colore_accenti) decorazioni3d();
-    color(colore_accenti) translate([W / 2, posizione_nome * H, T]) nome3d();
+    color(colore_accenti) translate([W / 2, posizione_nome * H, T - incasso_nome]) nome3d();
   }
   if (con_personaggio)
     translate([PERS_X, PERS_Y, altezza_base]) personaggio_completo();

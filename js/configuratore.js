@@ -10,7 +10,7 @@
 
   const API_URL = "/api/lettera";
   // Da aumentare quando cambia il modello, per non usare anteprime vecchie in cache.
-  const MODEL_REVISION = "1";
+  const MODEL_REVISION = "2";
   const PREVIEW_DELAY_MS = 450;
   const PHONE_PATTERN = /^\+?[0-9 ()./-]{6,24}$/;
   const EMAIL_PATTERN = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -312,10 +312,11 @@
       return `<text x="${round(x + dx, 2)}" y="${round(screenY + dy, 2)}" font-family="${nameFamily}" font-size="${round(nameSize, 3)}" stroke-width="${M.nameThicken * 2}" stroke-linejoin="round" ${attributes}>${escapeXml(layout.displayName)}</text>`;
     };
     parts.push(nameText(-T / 2, `fill="rgba(0,0,0,0.3)" stroke="rgba(0,0,0,0.3)" filter="url(#ombra-nome)"`, 2.5, 3.5));
-    for (let depth = 0; depth < M.nameDepth; depth += 0.75) {
+    const nameOut = M.nameDepth - M.nameInset;
+    for (let depth = 0; depth < nameOut; depth += 0.75) {
       parts.push(nameText(-T / 2 - depth, `fill="${accentSide}" stroke="${accentSide}"`));
     }
-    parts.push(nameText(-T / 2 - M.nameDepth, `fill="${accent}" stroke="${accent}"`));
+    parts.push(nameText(-T / 2 - nameOut, `fill="${accent}" stroke="${accent}"`));
 
     // Personaggio davanti alla lettera
     if (layout.withCharacter) {
