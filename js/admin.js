@@ -77,6 +77,7 @@ function setAuthMessage(message) {
 }
 
 function showLogin(message) {
+  if (activeUser) window.dispatchEvent(new CustomEvent("adl:admin-logout"));
   activeUser = null;
   document.getElementById("auth-view").hidden = false;
   document.getElementById("admin-view").hidden = true;
@@ -124,6 +125,8 @@ async function synchronizeSession(session) {
   }
 
   showAdmin(session.user);
+  // La scheda delle richieste (js/admin-richieste.js) parte solo per un admin verificato.
+  window.dispatchEvent(new CustomEvent("adl:admin-ready", { detail: { client: supabaseClient } }));
   await loadProducts();
 }
 

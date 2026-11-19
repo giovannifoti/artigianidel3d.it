@@ -5,3 +5,15 @@
 [build.environment]
   NODE_VERSION = "22"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# La funzione che genera la lettera porta con sé modello, font e OpenSCAD (WebAssembly).
+[functions.lettera]
+  included_files = [
+    "modello/lettera-nome.scad",
+    "modello/logo-scritta.scad",
+    "assets/fonts/*.ttf",
+    "vendor/openscad-node/openscad.cjs"
+  ]

@@ -21,5 +21,8 @@
 /assets/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+/vendor/*
+  Cache-Control: public, max-age=604800
+
 /sitemap.xml
   Cache-Control: public, max-age=3600

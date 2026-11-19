@@ -1,0 +1,7 @@
+OpenSCAD 2026.11.18, build WebAssembly ufficiale per Node.js
+Fonte: https://files.openscad.org/snapshots/OpenSCAD-2026.11.18-WebAssembly-node.zip
+SHA-256 dello zip: verificato con il file .sha256 pubblicato accanto.
+Il file è stato rinominato in openscad.cjs perché il progetto usa i moduli ES.
+
+OpenSCAD è software libero distribuito con licenza GNU GPL versione 2.
+Testo della licenza e sorgenti: https://github.com/openscad/openscad

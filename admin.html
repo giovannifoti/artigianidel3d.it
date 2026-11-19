@@ -816,6 +816,186 @@
       text-align: center;
     }
 
+    /* ---------- Richieste lettere ---------- */
+
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      width: fit-content;
+      margin: 28px 0 0;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface);
+    }
+
+    .admin-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .admin-tab[aria-selected="true"] { background: #fff; color: #07070a; }
+
+    .tab-badge {
+      min-width: 22px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: #d6157f;
+      color: #fff;
+      font-size: 0.74rem;
+      text-align: center;
+    }
+
+    .tab-badge[hidden] { display: none; }
+
+    .requests-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .filter-group { display: flex; gap: 6px; margin-right: auto; }
+
+    .filter-button {
+      min-height: 38px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .filter-button[aria-pressed="true"] { border-color: rgba(255, 255, 255, 0.5); color: var(--text); }
+
+    .request-list { display: grid; gap: 16px; padding-bottom: 64px; }
+
+    .request-card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--blue);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .request-card.status-nuova { border-left-color: #ff3cac; }
+    .request-card.status-completata, .request-card.status-annullata { border-left-color: rgba(255, 255, 255, 0.18); opacity: 0.82; }
+
+    .request-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .request-date { color: var(--muted); font-size: 0.78rem; }
+    .request-title { margin-top: 2px; font-size: 1.2rem; letter-spacing: -0.03em; }
+    .request-price { color: #d9d6e0; font-size: 0.86rem; font-weight: 700; }
+
+    .status-select {
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-2);
+      color: var(--text);
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .status-select[data-status="nuova"] { border-color: rgba(255, 60, 172, 0.6); }
+
+    .request-body {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .request-body h4 {
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .request-body p, .request-body li { font-size: 0.88rem; line-height: 1.6; }
+    .request-body ul { list-style: none; }
+    .request-body a { color: #adc2ff; text-decoration: underline; text-underline-offset: 3px; }
+    .contact-name { font-weight: 800; font-size: 1rem !important; }
+    .contact-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .contact-actions a { text-decoration: none !important; display: inline-flex; align-items: center; }
+
+    .request-size { margin-top: 8px; color: var(--muted); font-size: 0.78rem !important; }
+    .request-size.is-warning { color: #ffd166; }
+
+    .request-notes {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--surface-2);
+      font-size: 0.86rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .request-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .request-actions .row-button { display: inline-flex; align-items: center; }
+    .row-button[disabled] { opacity: 0.6; cursor: wait; }
+
+    .download-button { border: 1px solid rgba(199, 255, 74, 0.3); background: rgba(199, 255, 74, 0.08); color: var(--lime); }
+    .whatsapp-button { border: 1px solid rgba(37, 211, 102, 0.35); background: rgba(37, 211, 102, 0.1); color: #6ee79a !important; }
+    .ghost-button { border: 1px solid var(--line); background: transparent; color: var(--text) !important; }
+
+    .request-dialog {
+      width: min(860px, calc(100% - 32px));
+      margin: auto;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: #f1f4f5;
+      color: #18161c;
+    }
+
+    .request-dialog::backdrop { background: rgba(0, 0, 0, 0.6); }
+
+    .request-dialog-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .request-dialog-head h2 { font-size: 1rem; }
+    .request-dialog-viewer { position: relative; height: min(70vh, 600px); }
+    .request-dialog-viewer .viewer-canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+
+    .request-dialog-status {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+    }
+
+    .request-dialog-status[hidden] { display: none; }
+
+    @media (max-width: 760px) {
+      .request-body { grid-template-columns: 1fr; }
+      .request-head { flex-direction: column; }
+    }
+
     @media (max-width: 900px) {
       .admin-layout {
         grid-template-columns: 1fr;
@@ -999,6 +1179,32 @@
   </main>
 
   <main class="container" id="admin-view" hidden>
+    <div class="admin-tabs" role="tablist" aria-label="Sezioni del pannello">
+      <button class="admin-tab" id="tab-richieste" type="button" role="tab" data-tab="richieste" aria-selected="true" aria-controls="panel-richieste">
+        Richieste lettere <span class="tab-badge" id="richieste-badge" hidden></span>
+      </button>
+      <button class="admin-tab" id="tab-catalogo" type="button" role="tab" data-tab="catalogo" aria-selected="false" aria-controls="panel-catalogo" tabindex="-1">Catalogo</button>
+    </div>
+
+    <section id="panel-richieste" role="tabpanel" aria-labelledby="tab-richieste">
+      <div class="page-intro">
+        <p class="eyebrow">Configuratore</p>
+        <h1>Richieste lettere.</h1>
+        <p class="intro-copy">Le richieste lasciate su /lettera-personalizzata. Contatta il cliente, aggiorna lo stato e scarica i file pronti per la stampa.</p>
+      </div>
+      <div class="requests-toolbar">
+        <div class="filter-group" role="group" aria-label="Filtra le richieste">
+          <button class="filter-button" type="button" data-filter="attive" aria-pressed="true">Da gestire</button>
+          <button class="filter-button" type="button" data-filter="chiuse" aria-pressed="false">Chiuse</button>
+          <button class="filter-button" type="button" data-filter="tutte" aria-pressed="false">Tutte</button>
+        </div>
+        <span class="catalog-count" id="richieste-count" aria-live="polite"></span>
+        <button class="row-button edit-button" id="richieste-refresh" type="button">Aggiorna</button>
+      </div>
+      <div class="request-list" id="request-list" aria-live="polite"></div>
+    </section>
+
+    <div id="panel-catalogo" role="tabpanel" aria-labelledby="tab-catalogo" hidden>
     <section class="page-intro" aria-labelledby="page-title">
       <p class="eyebrow">Area gestione</p>
       <h1 id="page-title">Catalogo prodotti.</h1>
@@ -1076,10 +1282,23 @@
         <div class="product-list" id="product-list" aria-live="polite"></div>
       </section>
     </div>
+    </div>
   </main>
+
+  <dialog class="request-dialog" id="request-dialog" aria-labelledby="request-dialog-title">
+    <div class="request-dialog-head">
+      <h2 id="request-dialog-title">Anteprima</h2>
+      <button class="row-button ghost-button" id="request-dialog-close" type="button">Chiudi</button>
+    </div>
+    <div class="request-dialog-viewer" id="request-dialog-viewer">
+      <p class="request-dialog-status" id="request-dialog-status" role="status"></p>
+    </div>
+  </dialog>
 
   <script src="config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
+  <script src="js/lettera-core.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/admin-richieste.js"></script>
 </body>
 </html>

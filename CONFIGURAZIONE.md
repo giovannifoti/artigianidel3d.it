@@ -158,7 +158,8 @@ sito soltanto URL e Publishable Key, che sono valori pubblici.
    - publish directory: `dist`.
 5. Prima del deploy definitivo apri le impostazioni del sito Netlify, quindi
    **Environment variables**.
-6. Aggiungi due variabili disponibili almeno nello scope **Builds**:
+6. Aggiungi due variabili disponibili negli scope **Builds** e **Functions**
+   (la funzione che genera la lettera le usa per riconoscere l'admin):
    - `SUPABASE_URL`;
    - `SUPABASE_PUBLISHABLE_KEY`.
 7. Avvia **Deploy site** oppure **Trigger deploy**.
@@ -206,10 +207,63 @@ database.
 
 La pagina `/lettera-personalizzata` è un configuratore: il cliente sceglie
 versione (Essenziale 25 €, Decorata 35 €), nome, stile, colori, decorazioni e
-personaggio, vede l'anteprima e invia l'ordine su WhatsApp. Non usa Supabase:
-prezzi, colori e opzioni si cambiano in cima a `js/configuratore.js`, poi serve
-un nuovo deploy.
+personaggio, ruota il modello 3D e lascia nome, telefono ed email. La richiesta
+finisce nella scheda **Richieste lettere** del pannello admin e ti arriva una
+notifica su Telegram. Dal pannello contatti il cliente e scarichi i file 3MF o
+STL pronti per la stampa.
 
-Il modello 3D da stampare si genera con OpenSCAD dal file
-`modello/lettera-nome.scad`. Il procedimento completo, dal messaggio del cliente
-ai file da stampare, è descritto in `modello/LEGGIMI.md`.
+Funziona solo con la pubblicazione da GitHub (5B): l'anteprima 3D e i file di
+stampa li genera la funzione Netlify `/api/lettera`, che con Netlify Drop (5A)
+non viene pubblicata.
+
+### 1. Crea la tabella delle richieste
+
+1. In Supabase apri **SQL Editor > New query**.
+2. Incolla tutto `supabase-migration-richieste-lettere.sql` e premi **Run**.
+
+Lo script crea la tabella `letter_requests`: chiunque può inviare una richiesta
+dal sito, ma solo gli account in `admin_users` possono leggerle, cambiarne lo
+stato o cancellarle. Il prezzo lo decide il database in base alla versione, e
+un limite blocca gli invii a raffica (30 l'ora in tutto, 2 ogni 15 minuti dallo
+stesso numero).
+
+### 2. Notifiche Telegram
+
+1. Su Telegram scrivi a **@BotFather**, invia `/newbot` e segui le istruzioni.
+   Alla fine ricevi il **token** del bot (una riga come `123456:ABC-...`):
+   trattalo come una password.
+2. Apri la chat con il tuo nuovo bot e premi **Avvia** (o scrivigli un
+   messaggio qualsiasi).
+3. Nel browser apri `https://api.telegram.org/bot<TOKEN>/getUpdates`,
+   sostituendo `<TOKEN>`: nel testo cerca `"chat":{"id":` e copia il numero
+   che segue. È il tuo **chat id**.
+4. In Supabase apri **SQL Editor** ed esegui, con i tuoi valori:
+
+```sql
+select vault.create_secret('IL-TOKEN-DEL-BOT', 'telegram_bot_token');
+select vault.create_secret('IL-TUO-CHAT-ID', 'telegram_chat_id');
+```
+
+I due valori restano cifrati nel Vault di Supabase e non finiscono mai nel sito.
+In fondo a `supabase-migration-richieste-lettere.sql` c'è una query per inviare
+un messaggio di prova. La notifica contiene il nome sulla lettera, la versione e
+il nome di battesimo del cliente; telefono ed email li vedi solo nel pannello.
+
+### 3. Cosa cambiare e dove
+
+- Prezzi, colori dei filamenti, temi e personaggi: in cima a
+  `js/lettera-core.js`. Se cambi un prezzo, cambialo anche nella funzione
+  `prepare_letter_request` della migrazione e rieseguila.
+- Misure e forme del modello: `modello/lettera-nome.scad` e l'oggetto `M` in
+  `js/lettera-core.js` devono restare allineati (vedi `modello/LEGGIMI.md`).
+- Dopo ogni modifica al modello aumenta `MODEL_REVISION` in
+  `js/configuratore.js`, così i browser non mostrano anteprime vecchie.
+
+### Prova in locale
+
+```bash
+npm run build && npm run dev
+```
+
+Apre il sito su `http://localhost:8888` con l'anteprima 3D funzionante. Il
+pannello admin e il modulo usano comunque il progetto Supabase di `.env`.

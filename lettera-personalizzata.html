@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lettera con nome personalizzata in 3D | artigianidel3d</title>
-  <meta name="description" content="Crea la tua lettera con nome stampata in 3D: scegli iniziale, scritta, colori, decorazioni e orsetto. Anteprima immediata, da 25 €. Ordine su WhatsApp.">
+  <meta name="description" content="Crea la tua lettera con nome stampata in 3D: scegli iniziale, scritta, colori, decorazioni e orsetto. Anteprima 3D immediata, da 25 €. Richiedila online.">
   <meta name="robots" content="index, follow, max-image-preview:large">
   <meta name="theme-color" content="#0d0c10">
   <link rel="canonical" href="https://artigianidel3d.it/lettera-personalizzata">
@@ -13,7 +13,7 @@
   <meta property="og:type" content="product">
   <meta property="og:url" content="https://artigianidel3d.it/lettera-personalizzata">
   <meta property="og:title" content="Lettera con nome personalizzata in 3D | artigianidel3d">
-  <meta property="og:description" content="Iniziale, nome in corsivo, colori e decorazioni scelti da te. Guarda l’anteprima e ordina su WhatsApp.">
+  <meta property="og:description" content="Iniziale, nome in corsivo, colori e decorazioni scelti da te. Ruota l’anteprima 3D e richiedila online.">
   <meta property="og:image" content="https://artigianidel3d.it/assets/og-image.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
@@ -45,10 +45,10 @@
 
   <style>
     @font-face { font-family: "ADL Classica"; src: url("assets/fonts/DMSerifDisplay-Regular.ttf") format("truetype"); font-display: block; }
-    @font-face { font-family: "ADL Morbida"; src: url("assets/fonts/TitanOne-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Morbida"; src: url("assets/fonts/RammettoOne-Regular.ttf") format("truetype"); font-display: block; }
     @font-face { font-family: "ADL Decisa"; src: url("assets/fonts/ArchivoBlack-Regular.ttf") format("truetype"); font-display: block; }
     @font-face { font-family: "ADL Tondo"; src: url("assets/fonts/Pacifico-Regular.ttf") format("truetype"); font-display: block; }
-    @font-face { font-family: "ADL Elegante"; src: url("assets/fonts/Yellowtail-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Elegante"; src: url("assets/fonts/GreatVibes-Regular.ttf") format("truetype"); font-display: block; }
     @font-face { font-family: "ADL Delicato"; src: url("assets/fonts/Satisfy-Regular.ttf") format("truetype"); font-display: block; }
 
     :root {
@@ -527,36 +527,142 @@
 
     .fact span { color: var(--muted); }
 
-    /* ---------- Pannello laboratorio (solo per chi stampa) ---------- */
+    /* ---------- Anteprima 3D ---------- */
 
-    .lab {
-      padding: 24px;
-      border: 2px dashed var(--blue);
-      border-radius: var(--radius-lg);
-      background: #f3f6ff;
+    .viewer-3d {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 400ms ease;
+      pointer-events: none;
     }
 
-    .lab[hidden] { display: none; }
+    .viewer-canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+    .viewer-canvas:active { cursor: grabbing; }
 
-    .lab h2 { margin-bottom: 8px; font-size: 1.05rem; }
+    .preview-stage.has-3d .viewer-3d { opacity: 1; pointer-events: auto; }
+    .preview-stage.has-3d #preview { visibility: hidden; }
 
-    .lab p { margin-bottom: 12px; color: var(--muted); font-size: 0.86rem; }
+    .preview-status {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: rgba(13, 12, 16, 0.78);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+      transform: translateX(-50%);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
 
-    .lab textarea {
+    .preview-status[hidden] { display: none; }
+
+    .preview-stage.is-loading .preview-status::before {
+      width: 10px;
+      height: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: gira 800ms linear infinite;
+      content: "";
+    }
+
+    @keyframes gira { to { transform: rotate(360deg); } }
+
+    .viewer-hint {
+      position: absolute;
+      right: 14px;
+      bottom: 12px;
+      color: rgba(24, 22, 28, 0.5);
+      font-size: 0.72rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 300ms ease;
+      pointer-events: none;
+    }
+
+    .preview-stage.has-3d .viewer-hint { opacity: 1; }
+
+    /* ---------- Contatti e conferma ---------- */
+
+    .contact-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+    .field { display: grid; gap: 6px; }
+    .field-wide { grid-column: 1 / -1; }
+    .field label { font-size: 0.86rem; font-weight: 700; }
+    .optional { color: var(--muted); font-weight: 500; }
+
+    .field input, .field textarea {
       width: 100%;
-      min-height: 220px;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
+      min-height: 50px;
+      padding: 12px 16px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius-md);
       background: #fff;
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.74rem;
-      line-height: 1.5;
     }
 
-    .lab-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .field input:focus, .field textarea:focus { border-color: var(--text); outline: none; }
+    .field input[aria-invalid="true"], .consent input[aria-invalid="true"] { border-color: #c4314b; outline-color: #c4314b; }
+    .field-error { font-size: 0.8rem; }
+    .field-error:empty { display: none; }
 
-    .lab-actions .button { min-height: 44px; font-size: 0.86rem; }
+    .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+    .consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-top: 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .consent input { width: 20px; height: 20px; margin-top: 2px; flex: 0 0 auto; accent-color: var(--pink-cta); }
+
+    .privacy-info { margin: 8px 0 0 32px; color: var(--muted); font-size: 0.8rem; line-height: 1.55; }
+
+    .summary .button[disabled] { opacity: 0.7; cursor: wait; transform: none; }
+
+    .form-message { margin-top: 12px; color: #ffb3c1; font-size: 0.88rem; font-weight: 700; text-align: center; }
+    .form-message:empty { display: none; }
+
+    .success {
+      padding: 40px 28px;
+      border-radius: var(--radius-lg);
+      background: var(--card);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .success[hidden] { display: none; }
+    .success:focus { outline: none; }
+
+    .success-mark {
+      display: inline-grid;
+      width: 64px;
+      height: 64px;
+      place-items: center;
+      margin-bottom: 16px;
+      border-radius: 50%;
+      background: var(--lime);
+      color: var(--ink);
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+
+    .success h2 { font-size: 1.8rem; letter-spacing: -0.04em; }
+    .success p { max-width: 460px; margin: 12px auto 0; color: var(--muted); }
+    .success #success-summary { color: var(--text); font-weight: 700; }
+    .success .button { margin-top: 24px; }
 
     /* ---------- Footer ---------- */
 
@@ -596,6 +702,7 @@
       .version-grid { grid-template-columns: 1fr; }
       .chip-sample { font-size: 1.25rem; }
       .facts { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
       .footer-inner { align-items: flex-start; flex-direction: column; padding: 28px 0 112px; }
 
       .mobile-order {
@@ -653,28 +760,31 @@
       <div class="container intro-inner">
         <p class="eyebrow">Regalo nascita · Battesimo · Cameretta</p>
         <h1 id="intro-title">Lettera con nome, <span class="gradient-text">creata da te in 3D.</span></h1>
-        <p>Scegli iniziale, scritta e colori: l’anteprima cambia mentre scrivi. Quando ti piace, la ordini su WhatsApp e la stampiamo per te.</p>
+        <p>Scegli iniziale, scritta e colori e ruota il modello 3D mentre lo crei. Quando ti piace, lasci i tuoi contatti: ti richiamiamo noi e la stampiamo per te.</p>
       </div>
     </section>
 
     <section class="configurator" id="configuratore" aria-label="Configuratore della lettera">
       <div class="container config-layout">
         <div class="preview-panel">
-          <div class="preview-stage">
+          <div class="preview-stage" id="preview-stage">
             <svg id="preview" role="img" aria-labelledby="preview-title" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
               <title id="preview-title">Anteprima della lettera personalizzata</title>
             </svg>
+            <div class="viewer-3d" role="img" aria-label="Modello 3D della lettera: trascina per ruotarlo"></div>
             <p class="preview-loading" id="preview-loading">Preparo l’anteprima…</p>
+            <p class="preview-status" id="preview-status" role="status" hidden></p>
+            <span class="viewer-hint" aria-hidden="true">Trascina per ruotare</span>
           </div>
           <div class="preview-caption">
-            <span>Anteprima indicativa: forme e colori reali possono variare leggermente.</span>
-            <span>Altezza circa <strong id="preview-height">16 cm</strong></span>
+            <span>È il modello che stamperemo: colori reali del filamento leggermente diversi.</span>
+            <span>Altezza <strong>20 cm</strong></span>
           </div>
         </div>
 
         <div>
           <form class="config-form" id="config-form" novalidate>
-            <fieldset class="step">
+            <fieldset class="step" data-config>
               <legend><span class="step-number">1</span>Scegli la versione</legend>
               <div class="version-grid">
                 <label class="choice">
@@ -696,7 +806,7 @@
               </div>
             </fieldset>
 
-            <div class="step name-field">
+            <div class="step name-field" data-config>
               <label class="step-title" for="nome"><span class="step-number">2</span>Scrivi il nome</label>
               <input id="nome" name="nome" type="text" value="Salvatore" maxlength="14" autocomplete="off" autocapitalize="words" spellcheck="false" aria-describedby="nome-meta">
               <div class="field-meta" id="nome-meta">
@@ -705,7 +815,7 @@
               </div>
             </div>
 
-            <fieldset class="step">
+            <fieldset class="step" data-config>
               <legend><span class="step-number">3</span>Scegli lo stile</legend>
               <p class="sub-label">Scritta del nome</p>
               <div class="chip-grid" id="font-nome-group">
@@ -739,7 +849,7 @@
               </div>
             </fieldset>
 
-            <fieldset class="step">
+            <fieldset class="step" data-config>
               <legend><span class="step-number">4</span>Scegli i colori</legend>
               <p class="sub-label" id="colore-lettera-label">Colore della lettera</p>
               <div class="swatch-row" id="colore-lettera-group" role="radiogroup" aria-labelledby="colore-lettera-label"></div>
@@ -749,7 +859,7 @@
               <p class="swatch-name" id="colore-accenti-name"></p>
             </fieldset>
 
-            <fieldset class="step" id="step-decorazioni">
+            <fieldset class="step" id="step-decorazioni" data-config>
               <legend><span class="step-number">5</span>Scegli le decorazioni</legend>
               <p class="step-hint">Le decorazioni sono a rilievo sulla lettera, nel colore di nome e base.</p>
               <p class="sub-label">Tema</p>
@@ -758,37 +868,64 @@
               <div class="chip-grid" id="personaggio-group"></div>
             </fieldset>
 
-            <div class="step notes">
-              <label class="step-title" for="note"><span class="step-number" id="note-number">6</span>Note (facoltative)</label>
-              <textarea id="note" name="note" maxlength="300" placeholder="Per esempio: la data di nascita da aggiungere, una consegna entro una certa data…"></textarea>
-            </div>
+            <fieldset class="step contact" id="riepilogo">
+              <legend><span class="step-number" data-step-dopo-decorazioni="6">6</span>Lasciaci i tuoi contatti</legend>
+              <p class="step-hint">Ti contattiamo noi per confermare dettagli, tempi e consegna. Nessun pagamento online.</p>
+              <div class="contact-grid">
+                <div class="field">
+                  <label for="clienteNome">Nome e cognome</label>
+                  <input id="clienteNome" name="clienteNome" type="text" autocomplete="name" maxlength="80" required aria-describedby="errore-clienteNome">
+                  <span class="field-error" id="errore-clienteNome" aria-live="polite"></span>
+                </div>
+                <div class="field">
+                  <label for="clienteTelefono">Telefono</label>
+                  <input id="clienteTelefono" name="clienteTelefono" type="tel" autocomplete="tel" inputmode="tel" maxlength="24" placeholder="+39 …" required aria-describedby="errore-clienteTelefono">
+                  <span class="field-error" id="errore-clienteTelefono" aria-live="polite"></span>
+                </div>
+                <div class="field field-wide">
+                  <label for="clienteEmail">Email</label>
+                  <input id="clienteEmail" name="clienteEmail" type="email" autocomplete="email" maxlength="120" required aria-describedby="errore-clienteEmail">
+                  <span class="field-error" id="errore-clienteEmail" aria-live="polite"></span>
+                </div>
+                <div class="field field-wide">
+                  <label for="note">Note <span class="optional">(facoltative)</span></label>
+                  <textarea id="note" name="note" maxlength="500" placeholder="Per esempio: una data da aggiungere, una consegna entro un giorno preciso…"></textarea>
+                </div>
+              </div>
+              <div class="trap" aria-hidden="true">
+                <label for="sito">Lascia vuoto questo campo</label>
+                <input id="sito" name="sito" type="text" tabindex="-1" autocomplete="off">
+              </div>
+              <label class="consent" for="privacy">
+                <input id="privacy" name="privacy" type="checkbox" required aria-describedby="privacy-info errore-privacy">
+                <span>Acconsento al trattamento dei miei dati per essere ricontattato su questa richiesta.</span>
+              </label>
+              <p class="privacy-info" id="privacy-info">Usiamo nome, telefono ed email solo per rispondere a questa richiesta e preparare l’eventuale ordine: non li cediamo a terzi e li cancelliamo quando non servono più. Puoi chiederne la cancellazione in qualsiasi momento scrivendoci.</p>
+              <span class="field-error" id="errore-privacy" aria-live="polite"></span>
+            </fieldset>
 
-            <div class="summary" id="riepilogo">
+            <div class="summary">
               <div class="summary-head">
-                <span>Il tuo ordine</span>
+                <span>La tua lettera</span>
                 <strong class="summary-price" id="summary-price">35 €</strong>
               </div>
               <ul class="summary-list" id="summary-list"></ul>
-              <a class="button button-primary" id="order-button" href="https://wa.me/393446498901" target="_blank" rel="noopener noreferrer">
-                <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>
-                Ordina su WhatsApp
-              </a>
-              <p class="summary-note">Si apre WhatsApp con il riepilogo già scritto. Confermiamo insieme tempi e consegna prima di stampare.</p>
+              <button class="button button-primary" id="submit-button" type="submit">Invia la richiesta</button>
+              <p class="form-message" id="form-message" role="alert"></p>
+              <p class="summary-note">Inviare la richiesta non è un acquisto: paghi solo dopo aver confermato con noi.</p>
             </div>
-
-            <section class="lab" id="lab" hidden aria-labelledby="lab-title">
-              <h2 id="lab-title">Laboratorio: parametri OpenSCAD</h2>
-              <p>Salva il file nella cartella <code>modello/ordini</code> del progetto e aprilo con OpenSCAD, oppure esporta i pezzi con <code>modello/esporta.sh</code>.</p>
-              <textarea id="lab-output" readonly aria-label="Parametri OpenSCAD"></textarea>
-              <div class="lab-actions">
-                <button class="button button-primary" id="lab-download" type="button">Scarica file .scad</button>
-                <button class="button button-outline" id="lab-copy" type="button">Copia</button>
-              </div>
-            </section>
           </form>
 
+          <section class="success" id="request-success" hidden tabindex="-1" aria-labelledby="success-title">
+            <span class="success-mark" aria-hidden="true">✓</span>
+            <h2 id="success-title">Richiesta inviata!</h2>
+            <p id="success-summary"></p>
+            <p>Abbiamo ricevuto la tua lettera e ti contatteremo al più presto, al telefono o via email, per confermare dettagli e consegna.</p>
+            <button class="button button-outline" id="new-request" type="button">Crea un’altra lettera</button>
+          </section>
+
           <div class="facts">
-            <p class="fact"><strong>Circa 16 cm</strong><span>di altezza, base inclusa</span></p>
+            <p class="fact"><strong>20 cm</strong><span>di altezza, base inclusa</span></p>
             <p class="fact"><strong>Stampata a mano</strong><span>a Reggio Calabria, in PLA</span></p>
             <p class="fact"><strong>In tutta Italia</strong><span>consegna da concordare</span></p>
           </div>
@@ -814,9 +951,12 @@
 
   <div class="mobile-order" aria-hidden="true">
     <strong id="mobile-price">35 €</strong>
-    <a class="button button-primary" id="mobile-order-button" href="#riepilogo" tabindex="-1">Vai all’ordine</a>
+    <a class="button button-primary" id="mobile-order-button" href="#riepilogo" tabindex="-1">Invia la richiesta</a>
   </div>
 
+  <script src="config.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous" defer></script>
+  <script src="js/lettera-core.js" defer></script>
   <script src="js/configuratore.js" defer></script>
 </body>
 </html>

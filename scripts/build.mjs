@@ -10,7 +10,9 @@ const outputDirectory = join(projectRoot, "dist");
 const SITE_URL = "https://artigianidel3d.it";
 const PRODUCT_IMAGES_BUCKET = "product-images";
 const WHATSAPP_NUMBER = "393446498901";
-const SCRIPT_FILES = ["site.js", "admin.js", "configuratore.js"];
+// In ordine di dipendenza: i file importati da altri vengono rinominati per primi,
+// così i riferimenti ("./lettera-3d.js") puntano già al nome con l'hash.
+const SCRIPT_FILES = ["lettera-core.js", "lettera-3d.js", "site.js", "admin.js", "configuratore.js", "admin-richieste.js"];
 
 async function loadLocalEnvironment() {
   const environmentPath = join(projectRoot, ".env");
@@ -169,7 +171,10 @@ async function writeHashedScripts() {
   await mkdir(join(outputDirectory, "js"), { recursive: true });
 
   for (const fileName of SCRIPT_FILES) {
-    const contents = await readFile(join(projectRoot, "js", fileName));
+    let contents = await readFile(join(projectRoot, "js", fileName), "utf8");
+    for (const [source, hashed] of Object.entries(scriptPaths)) {
+      contents = contents.replaceAll(`"./${source.slice(3)}"`, `"./${hashed.slice(3)}"`);
+    }
     const hash = createHash("sha256").update(contents).digest("hex").slice(0, 10);
     const hashedName = fileName.replace(/\.js$/, `.${hash}.js`);
     await writeFile(join(outputDirectory, "js", hashedName), contents);
@@ -242,7 +247,9 @@ await mkdir(outputDirectory, { recursive: true });
 await Promise.all([
   copyFile(join(projectRoot, "robots.txt"), join(outputDirectory, "robots.txt")),
   copyFile(join(projectRoot, "404.html"), join(outputDirectory, "404.html")),
-  cp(join(projectRoot, "assets"), join(outputDirectory, "assets"), { recursive: true })
+  cp(join(projectRoot, "assets"), join(outputDirectory, "assets"), { recursive: true }),
+  // Solo three.js è pubblico: modello e OpenSCAD restano nella funzione /api/lettera.
+  cp(join(projectRoot, "vendor", "three"), join(outputDirectory, "vendor", "three"), { recursive: true })
 ]);
 
 const [scriptPaths, products] = await Promise.all([

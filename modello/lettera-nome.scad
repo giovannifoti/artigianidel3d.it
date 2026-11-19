@@ -15,20 +15,20 @@
 // dipendono dai font e dalle posizioni calcolate per le decorazioni.
 
 use <../assets/fonts/DMSerifDisplay-Regular.ttf>
-use <../assets/fonts/TitanOne-Regular.ttf>
+use <../assets/fonts/RammettoOne-Regular.ttf>
 use <../assets/fonts/ArchivoBlack-Regular.ttf>
 use <../assets/fonts/Pacifico-Regular.ttf>
-use <../assets/fonts/Yellowtail-Regular.ttf>
+use <../assets/fonts/GreatVibes-Regular.ttf>
 use <../assets/fonts/Satisfy-Regular.ttf>
-use <../assets/fonts/Manrope-SemiBold.ttf>
+use <logo-scritta.scad>
 
 /* [Personalizzazione] */
 nome = "Salvatore";
 // Vuoto = iniziale del nome
 lettera = "S";
 versione = "decorata"; // [essenziale, decorata]
-font_lettera = "DM Serif Display"; // [DM Serif Display, Titan One, Archivo Black]
-font_nome = "Pacifico"; // [Pacifico, Yellowtail, Satisfy]
+font_lettera = "DM Serif Display"; // [DM Serif Display, Rammetto One, Archivo Black]
+font_nome = "Pacifico"; // [Pacifico, Great Vibes, Satisfy]
 tema = "cielo"; // [cielo, notte, fiori]
 personaggio = "orsetto"; // [orsetto, elefantino, coniglietto, nessuno]
 
@@ -38,33 +38,37 @@ colore_accenti = "#d8c3a0";
 colore_personaggio = "#d8c3a0";
 colore_dettagli = "#fbf8f2";
 colore_occhi = "#3b2b25";
+colore_logo = "#2b2930";
 
 /* [Dimensioni in mm] */
-altezza_lettera = 150;
-spessore_lettera = 25;
-altezza_max_nome = 30;
-// 0 = automatica: almeno 145 mm, di più sulle lettere larghe
+// Altezza totale dell'oggetto: altezza_base - profondita_incastro + altezza_lettera = 200 mm
+altezza_lettera = 186;
+spessore_lettera = 30;
+altezza_max_nome = 37;
+// 0 = automatica: almeno 180 mm, di più sulle lettere larghe
 larghezza_max_nome = 0;
 // Centro del nome sull'altezza della lettera (0 = fondo, 1 = cima)
 posizione_nome = 0.52;
-spessore_nome = 5;
+spessore_nome = 6;
 // Irrobustisce i tratti sottili del corsivo
 ispessimento_nome = 0.3;
 spessore_decorazioni = 1.2;
-altezza_base = 14;
-margine_base = 18;
+altezza_base = 17;
+margine_base = 22;
 smusso_base = 2;
 profondita_incastro = 3;
 tolleranza_incastro = 0.25;
-altezza_personaggio = 70;
+altezza_personaggio = 87;
 
 /* [Logo sotto la base] */
 logo = "inciso"; // [inciso, intarsio, nessuno]
-larghezza_logo = 80;
+larghezza_logo = 95;
 profondita_logo = 0.8;
 
 /* [Esportazione] */
-parte = "anteprima"; // [anteprima, lettera, decorazioni, nome, base, logo, personaggio, personaggio_dettagli, personaggio_cuore, personaggio_occhi]
+// I "gruppo_" esportano più pezzi allineati in un solo file (con --enable=lazy-union
+// ogni pezzo resta un oggetto separato, pronto per la stampa multicolore)
+parte = "anteprima"; // [anteprima, gruppo_lettera, gruppo_nome, gruppo_base, gruppo_personaggio, lettera, decorazioni, nome, base, logo, personaggio, personaggio_dettagli, personaggio_cuore, personaggio_occhi]
 
 /* [Dati generati dal configuratore] */
 // Riquadro dell'inchiostro del testo rispetto all'origine del carattere:
@@ -74,12 +78,14 @@ nome_bbox = [0.034, -0.008, 4.141, 0.94];
 // [tipo, u, v, raggio, rotazione]: u e v da 0 a 1 sul riquadro della lettera,
 // raggio in frazione dell'altezza della lettera
 decorazioni = [
-  ["mongolfiera", 0.8367, 0.3141, 0.08, 0],
-  ["nuvola", 0.1542, 0.7433, 0.08, 0],
-  ["nuvola", 0.8049, 0.1405, 0.0545, 0],
-  ["stella", 0.2132, 0.8931, 0.0367, 5],
-  ["stella", 0.8706, 0.8968, 0.0284, -10],
-  ["stella", 0.6536, 0.3707, 0.025, -11]
+  ["mongolfiera", 0.8397, 0.3131, 0.0798, 0],
+  ["nuvola", 0.1514, 0.7445, 0.08, 0],
+  ["nuvola", 0.8249, 0.1589, 0.0545, 0],
+  ["stella", 0.2113, 0.8948, 0.0367, 5],
+  ["stella", 0.873, 0.8985, 0.0284, -10],
+  ["stella", 0.7371, 0.081, 0.0284, 18],
+  ["stella", 0.6754, 0.3714, 0.0284, 19],
+  ["stella", 0.3058, 0.6628, 0.025, 5]
 ];
 
 /* [Hidden] */
@@ -96,7 +102,7 @@ W = (lettera_bbox[2] - lettera_bbox[0]) * kL;
 
 nome_w_em = nome_bbox[2] - nome_bbox[0];
 nome_h_em = nome_bbox[3] - nome_bbox[1];
-LARGHEZZA_NOME = larghezza_max_nome > 0 ? larghezza_max_nome : max(145, W * 0.95);
+LARGHEZZA_NOME = larghezza_max_nome > 0 ? larghezza_max_nome : max(180, W * 0.95);
 kN = min(altezza_max_nome / nome_h_em, LARGHEZZA_NOME / nome_w_em);
 NH = nome_h_em * kN;
 
@@ -110,7 +116,7 @@ P_RETRO = 23;    // sporgenza verso il retro
 P_MEZZA_LARGH = 30;
 sP = altezza_personaggio / P_ALTEZZA;
 GAP_PERSONAGGIO = 3;
-PERS_X = -W / 2 + 10;
+PERS_X = -W / 2 + 12;
 PERS_Y = -T / 2 - GAP_PERSONAGGIO - P_RETRO * sP;
 
 // Base ellittica: deve contenere la lettera con il margine e, se c'è, il personaggio
@@ -126,6 +132,11 @@ BASE_A_PERS = con_personaggio
 BASE_A = max(BASE_A_LETTERA, BASE_A_PERS, BASE_B * 1.25);
 
 Z_LETTERA = altezza_base - profondita_incastro;
+
+// Ingombro della base ruotata di 45°: deve stare sul piatto da 256 mm
+INGOMBRO_BASE_DIAGONALE = 2 * sqrt((pow(BASE_A, 2) + pow(BASE_B, 2)) / 2);
+if (INGOMBRO_BASE_DIAGONALE > 250)
+  echo(str("ATTENZIONE: la base misura ", round(2 * BASE_A), " x ", round(2 * BASE_B), " mm e non entra nel piatto"));
 
 // ---------------------------------------------------------------- Forme 2D
 
@@ -260,8 +271,7 @@ module logo2d_svg() {
   tratto(p(48, 52), p(48, 79), 5);
   translate(p(48, 52)) circle(6.5);
   // Scritta
-  translate([108, 96 - 60]) resize([287, 0], auto = true)
-    text("artigianidel3d", size = 10, font = "Manrope ExtraLight SemiBold");
+  translate([108, 96 - 60]) resize([287, 0], auto = true) scritta_logo();
 }
 
 // Logo centrato e specchiato, per leggerlo correttamente guardando il fondo
@@ -452,13 +462,17 @@ module anteprima() {
     translate([PERS_X, PERS_Y, altezza_base]) personaggio_completo();
 }
 
+// Ogni pezzo è un'istruzione separata: esportando con --enable=lazy-union
+// diventa un oggetto distinto nel 3MF, con il suo colore.
+function mostra(nomi) = len([for (n = nomi) if (n == parte) n]) > 0;
+
 if (parte == "anteprima") anteprima();
-else if (parte == "lettera") lettera3d();
-else if (parte == "decorazioni") decorazioni3d();
-else if (parte == "nome") nome3d();
-else if (parte == "base") base3d();
-else if (parte == "logo") { if (logo == "intarsio") logo3d(); }
-else if (con_personaggio && parte == "personaggio") personaggio_parte("corpo");
-else if (con_personaggio && parte == "personaggio_dettagli") personaggio_parte("dettagli");
-else if (con_personaggio && parte == "personaggio_cuore") personaggio_parte("cuore");
-else if (con_personaggio && parte == "personaggio_occhi") personaggio_parte("occhi");
+if (mostra(["lettera", "gruppo_lettera"])) color(colore_lettera) lettera3d();
+if (mostra(["decorazioni", "gruppo_lettera"])) color(colore_accenti) decorazioni3d();
+if (mostra(["nome", "gruppo_nome"])) color(colore_accenti) nome3d();
+if (mostra(["base", "gruppo_base"])) color(colore_accenti) base3d();
+if (logo == "intarsio" && mostra(["logo", "gruppo_base"])) color(colore_logo) logo3d();
+if (con_personaggio && mostra(["personaggio", "gruppo_personaggio"])) color(colore_personaggio) personaggio_parte("corpo");
+if (con_personaggio && mostra(["personaggio_dettagli", "gruppo_personaggio"])) color(colore_dettagli) personaggio_parte("dettagli");
+if (con_personaggio && mostra(["personaggio_cuore", "gruppo_personaggio"])) color(colore_lettera) personaggio_parte("cuore");
+if (con_personaggio && mostra(["personaggio_occhi", "gruppo_personaggio"])) color(colore_occhi) personaggio_parte("occhi");

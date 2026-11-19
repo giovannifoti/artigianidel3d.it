@@ -1,61 +1,54 @@
 # Lettera con nome: modello parametrico
 
-Il modello `lettera-nome.scad` è originale di artigianidel3d e genera tutti i
-pezzi della lettera venduta su `/lettera-personalizzata`. Lettera, nome e
-decorazioni usano gli stessi font del sito (`assets/fonts/`), quindi l'anteprima
-che vede il cliente e i file da stampare coincidono.
+`lettera-nome.scad` è il modello originale di artigianidel3d da cui escono sia
+l'anteprima 3D del configuratore (`/lettera-personalizzata`) sia i file di stampa.
+L'oggetto finito è alto 20 cm: base 17 mm, lettera 186 mm incastrata per 3 mm.
 
-## Dall'ordine WhatsApp ai file da stampare
+Il sorgente non viene pubblicato nel sito: lo usa solo la funzione Netlify
+`netlify/functions/lettera.mjs`, con la build WebAssembly ufficiale di OpenSCAD
+in `vendor/openscad-node/` (versione 2026.11.18, licenza GPL-2.0,
+sorgenti su https://github.com/openscad/openscad).
 
-1. Il messaggio del cliente termina con un link di riepilogo
-   (`…/lettera-personalizzata#v=decorata&n=…`). Aprilo nel browser.
-2. La prima volta su quel browser, apri
-   `https://artigianidel3d.it/lettera-personalizzata#laboratorio`: compare il
-   riquadro **Laboratorio** sotto il riepilogo, e resta attivo nelle visite
-   successive (`#laboratorio=0` lo nasconde).
-3. Premi **Scarica file .scad** e sposta il file in `modello/ordini/`.
-4. Esporta i pezzi:
+## Dalla richiesta ai file da stampare
 
-   ```bash
-   ./modello/esporta.sh modello/ordini/lettera-salvatore.scad
-   ```
+1. Il cliente invia la richiesta dal configuratore: ti arriva la notifica su
+   Telegram e la richiesta compare nel pannello admin, scheda **Richieste lettere**.
+2. Contatti il cliente dai pulsanti WhatsApp, Chiama o Email e aggiorni lo stato.
+3. **Scarica 3MF** genera uno ZIP con un file per gruppo di stampa e un
+   `LEGGIMI.txt` con i colori. **Scarica STL** dà invece i pezzi singoli.
 
-   I file `.3mf` finiscono in `modello/ordini/lettera-salvatore/`. Per gli STL
-   aggiungi `stl` in fondo al comando.
+In alternativa, sul Mac con OpenSCAD installato:
 
-Puoi anche aprire il file dell'ordine con OpenSCAD per vedere l'anteprima a
-colori. La cartella `modello/ordini/` non va su git (contiene i nomi dei
-clienti), tranne gli esempi `esempio-*.scad`.
+```bash
+./modello/esporta.sh modello/ordini/esempio-salvatore.scad
+```
 
-## Pezzi e stampa
+La cartella `modello/ordini/` non va su git (conterrebbe nomi di clienti), tranne
+gli esempi `esempio-*.scad`.
 
-| Pezzo | Come si stampa |
+## Gruppi di stampa
+
+In ogni 3MF i pezzi sono oggetti separati e già allineati: in Bambu Studio
+conferma "oggetto singolo con più parti" e assegna i filamenti.
+
+| File | Contenuto e stampa |
 | --- | --- |
-| `lettera` + `decorazioni` | Importali insieme come un unico oggetto con due parti: la lettera è sdraiata, le decorazioni (1,2 mm) stanno sulla faccia superiore, nel colore degli accenti. |
-| `nome` | Sdraiato, colore degli accenti. Si incolla sulla lettera al centro, poco sopra metà altezza. |
-| `base` | Così com'è. Il logo artigianidel3d è inciso sul fondo (0,8 mm, già specchiato per leggerlo girando la base). In alto c'è la sede della lettera, profonda 3 mm con 0,25 mm di gioco. |
-| `logo` | Solo se nel file imposti `logo = "intarsio";`: il logo diventa un pezzo a filo del fondo, da stampare in un altro colore insieme alla base. |
-| `personaggio` + `_dettagli` + `_cuore` + `_occhi` | Un unico oggetto multicolore, in piedi. Servono supporti ad albero sotto testa e braccia. Si incolla sulla base davanti alla lettera, a sinistra. |
+| `1-lettera-e-decorazioni` | Lettera sdraiata, con le decorazioni (1,2 mm) sulla faccia superiore. |
+| `2-nome` | Nome in corsivo sdraiato, da incollare sulla lettera poco sopra metà altezza. |
+| `3-base` | Base con la sede della lettera (3 mm, gioco 0,25 mm) e il logo inciso sotto, già specchiato. Con `logo = "intarsio"` il logo diventa un secondo oggetto a filo, per stamparlo in un altro colore. |
+| `4-personaggio` | Corpo, dettagli bianchi, cuore e occhi. Serve il supporto ad albero sotto testa e braccia. Si incolla davanti alla lettera, a sinistra. |
 
-Misure predefinite: lettera alta 150 mm e spessa 25 mm, nome alto al massimo
-30 mm e spesso 5 mm, base alta 14 mm, personaggio alto 70 mm. Si cambiano nella
-sezione *Dimensioni in mm* del file.
+Le lettere larghe (M, W) hanno basi lunghe fino a circa 30 cm: il pannello
+avvisa quando la base va messa in diagonale sul piatto da 256 mm.
 
 ## Cosa modificare e dove
 
-- **Prezzi, colori dei filamenti, temi, personaggi**: in cima a
-  `js/configuratore.js`. Per un nuovo colore basta aggiungere una riga a
-  `LETTER_COLORS` o `ACCENT_COLORS` (nome e codice esadecimale).
-- **Misure del modello**: sono sia in `lettera-nome.scad` sia nell'oggetto `M`
-  di `js/configuratore.js`. Se ne cambi una, cambiala in tutti e due i file,
-  altrimenti l'anteprima del sito non corrisponde più al pezzo stampato.
-- **Forme di decorazioni e personaggi**: sono disegnate due volte, in
-  `lettera-nome.scad` (3D) e in `js/configuratore.js` (anteprima). Le misure sono
-  le stesse nei due file.
-
-## Requisiti
-
-OpenSCAD 2026 o successivo (su Mac: `brew install --cask openscad@snapshot`).
-Lo script usa il motore Manifold, che esporta un ordine completo in pochi
-secondi. I font sono gratuiti anche per uso commerciale: le licenze sono in
-`assets/fonts/licenze/`.
+- **Misure**: in `lettera-nome.scad` (sezione *Dimensioni in mm*) e nell'oggetto
+  `M` di `js/lettera-core.js`. Vanno cambiate insieme: il browser le usa per
+  posizionare le decorazioni e disegnare l'anteprima immediata.
+- **Font**: devono stare in `assets/fonts/` ed essere caricati con `use <...>`
+  nel modello e con `@font-face` in `lettera-personalizzata.html`. Prima di
+  aggiungerne uno, prova che la build WebAssembly lo legga: Titan One e
+  Yellowtail, per esempio, la fanno andare in errore.
+- **Scritta del logo sotto la base**: è in `logo-scritta.scad`, già convertita
+  in contorni. Non dipende da nessun font.
