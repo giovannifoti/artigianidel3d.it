@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lettera con nome personalizzata in 3D | artigianidel3d</title>
+  <meta name="description" content="Crea la tua lettera con nome stampata in 3D: scegli iniziale, scritta, colori, decorazioni e orsetto. Anteprima immediata, da 25 €. Ordine su WhatsApp.">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="theme-color" content="#0d0c10">
+  <link rel="canonical" href="https://artigianidel3d.it/lettera-personalizzata">
+  <meta property="og:locale" content="it_IT">
+  <meta property="og:site_name" content="artigianidel3d">
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="https://artigianidel3d.it/lettera-personalizzata">
+  <meta property="og:title" content="Lettera con nome personalizzata in 3D | artigianidel3d">
+  <meta property="og:description" content="Iniziale, nome in corsivo, colori e decorazioni scelti da te. Guarda l’anteprima e ordina su WhatsApp.">
+  <meta property="og:image" content="https://artigianidel3d.it/assets/og-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="preload" href="assets/fonts/DMSerifDisplay-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="preload" href="assets/fonts/Pacifico-Regular.ttf" as="font" type="font/ttf" crossorigin>
+  <script data-goatcounter="https://giovannifoti22.goatcounter.com/count" async src="https://gc.zgo.at/count.v4.js" integrity="sha384-nRw6qfbWyJha9LhsOtSb2YJDyZdKvvCFh0fJYlkquSFjUxp9FVNugbfy8q1jdxI+" crossorigin="anonymous"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Lettera con nome personalizzata stampata in 3D",
+    "description": "Lettera iniziale stampata in 3D con il nome in corsivo e la base con il logo artigianidel3d. Versione essenziale o decorata con stelle, nuvole, mongolfiera e orsetto.",
+    "image": "https://artigianidel3d.it/assets/og-image.jpg",
+    "brand": { "@type": "Brand", "name": "artigianidel3d" },
+    "offers": {
+      "@type": "AggregateOffer",
+      "lowPrice": "25.00",
+      "highPrice": "35.00",
+      "offerCount": "2",
+      "priceCurrency": "EUR",
+      "url": "https://artigianidel3d.it/lettera-personalizzata"
+    }
+  }
+  </script>
+
+  <style>
+    @font-face { font-family: "ADL Classica"; src: url("assets/fonts/DMSerifDisplay-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Morbida"; src: url("assets/fonts/TitanOne-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Decisa"; src: url("assets/fonts/ArchivoBlack-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Tondo"; src: url("assets/fonts/Pacifico-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Elegante"; src: url("assets/fonts/Yellowtail-Regular.ttf") format("truetype"); font-display: block; }
+    @font-face { font-family: "ADL Delicato"; src: url("assets/fonts/Satisfy-Regular.ttf") format("truetype"); font-display: block; }
+
+    :root {
+      --ink: #0d0c10;
+      --ink-line: rgba(255, 255, 255, 0.1);
+      --on-ink: #f6f5f8;
+      --on-ink-muted: #a7a4b0;
+      --paper: #f6f3ee;
+      --card: #ffffff;
+      --text: #18161c;
+      --muted: #5d5866;
+      --line: #e4dfd7;
+      --pink: #ff3cac;
+      --pink-cta: #d6157f;
+      --pink-cta-hover: #e0128a;
+      --pink-on-paper: #b5106a;
+      --blue: #5688ff;
+      --lime: #c7ff4a;
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --shadow-soft: 0 1px 2px rgba(24, 22, 28, 0.04), 0 12px 32px rgba(24, 22, 28, 0.07);
+      --header-height: 72px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-padding-top: calc(var(--header-height) + 12px); }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--paper);
+      color: var(--text);
+      font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; color: inherit; }
+
+    svg.icon {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 auto;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 1.8;
+    }
+
+    .container { width: min(1200px, calc(100% - 48px)); margin-inline: auto; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+    .skip-link {
+      position: absolute;
+      z-index: 60;
+      top: 12px;
+      left: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      background: var(--lime);
+      color: var(--ink);
+      font-weight: 700;
+      transform: translateY(-160%);
+      transition: transform 180ms ease;
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 0 24px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.2;
+      transition: background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button-primary {
+      background: var(--pink-cta);
+      box-shadow: 0 10px 28px rgba(214, 21, 127, 0.28);
+      color: #fff;
+    }
+
+    .button-primary:hover { background: var(--pink-cta-hover); }
+
+    .button-outline { border-color: var(--text); background: transparent; }
+
+    /* ---------- Header ---------- */
+
+    .site-header {
+      position: sticky;
+      z-index: 40;
+      top: 0;
+      border-bottom: 1px solid var(--ink-line);
+      background: rgba(13, 12, 16, 0.86);
+      color: var(--on-ink);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      min-height: var(--header-height);
+    }
+
+    .logo { display: inline-flex; align-items: center; gap: 10px; border-radius: var(--radius-sm); }
+    .brand-mark { width: 42px; height: 42px; }
+    .brand-wordmark { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.05em; line-height: 1; }
+
+    .brand-accent {
+      background: linear-gradient(100deg, var(--pink), #ad65ff 52%, var(--blue));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .nav-links { display: flex; align-items: center; gap: 4px; font-size: 0.9rem; font-weight: 600; }
+
+    .nav-link {
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--on-ink-muted);
+      transition: color 180ms ease, background-color 180ms ease;
+    }
+
+    .nav-link:hover { background: rgba(255, 255, 255, 0.07); color: var(--on-ink); }
+
+    /* ---------- Intro ---------- */
+
+    .intro {
+      background:
+        radial-gradient(circle at 12% 0%, rgba(255, 60, 172, 0.16), transparent 30rem),
+        radial-gradient(circle at 92% 40%, rgba(86, 136, 255, 0.14), transparent 32rem),
+        var(--ink);
+      color: var(--on-ink);
+    }
+
+    .intro-inner { padding: 52px 0 56px; max-width: 760px; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: #d9d6e0;
+      font-size: 0.76rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lime);
+      box-shadow: 0 0 14px rgba(199, 255, 74, 0.7);
+      content: "";
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 4.6vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1.04;
+      text-wrap: balance;
+    }
+
+    .gradient-text {
+      background: linear-gradient(100deg, var(--pink), #b888ff 50%, var(--blue));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .intro p { margin-top: 18px; color: var(--on-ink-muted); font-size: 1.06rem; max-width: 600px; }
+
+    /* ---------- Configuratore ---------- */
+
+    .configurator { padding: 48px 0 96px; }
+
+    .config-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+      align-items: start;
+      gap: 40px;
+    }
+
+    .preview-panel {
+      position: sticky;
+      top: calc(var(--header-height) + 20px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: linear-gradient(180deg, #f1f4f5 0%, #e8ecee 70%, #dfe3e5 100%);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .preview-stage { position: relative; aspect-ratio: 1 / 1; }
+
+    .preview-stage svg { display: block; width: 100%; height: 100%; }
+
+    .preview-loading {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .preview-loading[hidden] { display: none; }
+
+    .preview-caption {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 6px 16px;
+      padding: 14px 20px 16px;
+      border-top: 1px solid rgba(24, 22, 28, 0.06);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .preview-caption strong { color: var(--text); }
+
+    .config-form { display: grid; gap: 18px; }
+
+    .step {
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: var(--card);
+    }
+
+    .step[hidden] { display: none; }
+
+    .step legend, .step-title {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 1.02rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    fieldset.step { min-width: 0; }
+
+    .step-number {
+      display: inline-grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      transform: translateY(-1px);
+    }
+
+    .step-hint { margin: -6px 0 14px; color: var(--muted); font-size: 0.88rem; }
+
+    .sub-label { margin: 18px 0 10px; font-size: 0.86rem; font-weight: 700; }
+
+    .version-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+    .choice { position: relative; display: block; cursor: pointer; }
+
+    .choice input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .version-card {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      gap: 6px;
+      padding: 18px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius-md);
+      transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+    }
+
+    .version-card strong { font-size: 1rem; }
+
+    .version-card .version-price { color: var(--text); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.2; }
+
+    .version-card span { color: var(--muted); font-size: 0.86rem; line-height: 1.5; }
+
+    .choice input:checked + .version-card {
+      border-color: var(--pink-cta);
+      background: #fff7fb;
+      box-shadow: 0 8px 24px rgba(214, 21, 127, 0.12);
+    }
+
+    .choice input:focus-visible + * { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+    .name-field input {
+      width: 100%;
+      min-height: 54px;
+      padding: 0 18px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .name-field input:focus { border-color: var(--text); outline: none; }
+
+    .name-field input[aria-invalid="true"] { border-color: #c4314b; }
+
+    .field-meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .field-error { color: #b4233f; font-weight: 700; }
+
+    .chip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+
+    .chip {
+      display: flex;
+      min-height: 76px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 10px 8px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius-md);
+      text-align: center;
+      transition: border-color 160ms ease, background-color 160ms ease;
+    }
+
+    .chip-sample {
+      max-width: 100%;
+      overflow: hidden;
+      font-size: 1.5rem;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .chip-label { color: var(--muted); font-size: 0.76rem; font-weight: 700; }
+
+    .chip-sample[data-sample="lettera"] { font-size: 2rem; line-height: 1.1; }
+
+    .choice input:checked + .chip { border-color: var(--text); background: #faf8f5; }
+
+    .swatch-row { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .swatch {
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 50%;
+      box-shadow: inset 0 0 0 1px rgba(24, 22, 28, 0.14);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .choice:hover .swatch { transform: scale(1.06); }
+
+    .choice input:checked + .swatch {
+      box-shadow: inset 0 0 0 1px rgba(24, 22, 28, 0.14), 0 0 0 3px #fff, 0 0 0 5px var(--text);
+    }
+
+    .swatch-name { margin-top: 10px; color: var(--muted); font-size: 0.84rem; }
+
+    .swatch-name strong { color: var(--text); }
+
+    .icon-chip { min-height: 92px; }
+
+    .icon-chip svg { width: 44px; height: 44px; }
+
+    .notes textarea {
+      width: 100%;
+      min-height: 96px;
+      padding: 14px 16px;
+      border: 2px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+      resize: vertical;
+    }
+
+    .notes textarea:focus { border-color: var(--text); outline: none; }
+
+    .summary {
+      padding: 26px 24px;
+      border-radius: var(--radius-lg);
+      background: var(--ink);
+      color: var(--on-ink);
+    }
+
+    .summary-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .summary-head span { color: var(--on-ink-muted); font-size: 0.86rem; font-weight: 600; }
+
+    .summary-price { font-size: 2rem; font-weight: 800; letter-spacing: -0.04em; }
+
+    .summary-list {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 20px;
+      color: var(--on-ink-muted);
+      font-size: 0.88rem;
+      list-style: none;
+    }
+
+    .summary-list strong { color: var(--on-ink); font-weight: 700; }
+
+    .summary .button { width: 100%; }
+
+    .summary-note { margin-top: 12px; color: var(--on-ink-muted); font-size: 0.8rem; text-align: center; }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .fact {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: var(--card);
+      font-size: 0.84rem;
+    }
+
+    .fact strong { display: block; font-size: 0.9rem; }
+
+    .fact span { color: var(--muted); }
+
+    /* ---------- Pannello laboratorio (solo per chi stampa) ---------- */
+
+    .lab {
+      padding: 24px;
+      border: 2px dashed var(--blue);
+      border-radius: var(--radius-lg);
+      background: #f3f6ff;
+    }
+
+    .lab[hidden] { display: none; }
+
+    .lab h2 { margin-bottom: 8px; font-size: 1.05rem; }
+
+    .lab p { margin-bottom: 12px; color: var(--muted); font-size: 0.86rem; }
+
+    .lab textarea {
+      width: 100%;
+      min-height: 220px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: #fff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.74rem;
+      line-height: 1.5;
+    }
+
+    .lab-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+
+    .lab-actions .button { min-height: 44px; font-size: 0.86rem; }
+
+    /* ---------- Footer ---------- */
+
+    footer { background: var(--ink); color: var(--on-ink-muted); font-size: 0.86rem; }
+
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px 32px;
+      padding: 36px 0;
+    }
+
+    .footer-brand strong { display: block; color: var(--on-ink); font-size: 0.92rem; }
+
+    .footer-links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+
+    .footer-links a:hover { color: var(--on-ink); }
+
+    .mobile-order { display: none; }
+
+    @media (max-width: 960px) {
+      .config-layout { grid-template-columns: 1fr; gap: 24px; }
+      .preview-panel { position: relative; top: 0; }
+      .nav-link { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      :root { --header-height: 64px; }
+      .container { width: calc(100% - 32px); }
+      .brand-mark { width: 36px; height: 36px; }
+      .brand-wordmark { font-size: 1.04rem; }
+      .intro-inner { padding: 36px 0 40px; }
+      .configurator { padding: 24px 0 72px; }
+      .step { padding: 20px 18px; }
+      .version-grid { grid-template-columns: 1fr; }
+      .chip-sample { font-size: 1.25rem; }
+      .facts { grid-template-columns: 1fr; }
+      .footer-inner { align-items: flex-start; flex-direction: column; padding: 28px 0 112px; }
+
+      .mobile-order {
+        position: fixed;
+        z-index: 30;
+        right: 12px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        left: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 10px 10px 20px;
+        border-radius: 999px;
+        background: rgba(13, 12, 16, 0.94);
+        box-shadow: 0 16px 40px rgba(13, 12, 16, 0.35);
+        color: var(--on-ink);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .mobile-order strong { font-size: 1.2rem; letter-spacing: -0.03em; }
+      .mobile-order .button { min-height: 46px; padding: 0 20px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position: absolute">
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.6 7.1L4 20l1.4-4.2A8 8 0 1 1 20 11.5Z"/></symbol>
+  </svg>
+
+  <a class="skip-link" href="#configuratore">Vai al configuratore</a>
+
+  <header class="site-header">
+    <div class="container navbar">
+      <a class="logo" href="/" aria-label="artigianidel3d, home">
+        <img class="brand-mark" src="assets/logo-mark.svg" alt="" width="42" height="42">
+        <span class="brand-wordmark" aria-hidden="true">artigiani<span class="brand-accent">del3d</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Navigazione principale">
+        <a class="nav-link" href="/#collezione">Collezione</a>
+        <a class="nav-link" href="/#come-funziona">Come funziona</a>
+        <a class="nav-link" href="/#faq">FAQ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenuto">
+    <section class="intro" aria-labelledby="intro-title">
+      <div class="container intro-inner">
+        <p class="eyebrow">Regalo nascita · Battesimo · Cameretta</p>
+        <h1 id="intro-title">Lettera con nome, <span class="gradient-text">creata da te in 3D.</span></h1>
+        <p>Scegli iniziale, scritta e colori: l’anteprima cambia mentre scrivi. Quando ti piace, la ordini su WhatsApp e la stampiamo per te.</p>
+      </div>
+    </section>
+
+    <section class="configurator" id="configuratore" aria-label="Configuratore della lettera">
+      <div class="container config-layout">
+        <div class="preview-panel">
+          <div class="preview-stage">
+            <svg id="preview" role="img" aria-labelledby="preview-title" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+              <title id="preview-title">Anteprima della lettera personalizzata</title>
+            </svg>
+            <p class="preview-loading" id="preview-loading">Preparo l’anteprima…</p>
+          </div>
+          <div class="preview-caption">
+            <span>Anteprima indicativa: forme e colori reali possono variare leggermente.</span>
+            <span>Altezza circa <strong id="preview-height">16 cm</strong></span>
+          </div>
+        </div>
+
+        <div>
+          <form class="config-form" id="config-form" novalidate>
+            <fieldset class="step">
+              <legend><span class="step-number">1</span>Scegli la versione</legend>
+              <div class="version-grid">
+                <label class="choice">
+                  <input type="radio" name="versione" value="essenziale">
+                  <span class="version-card">
+                    <strong>Essenziale</strong>
+                    <span class="version-price">25 €</span>
+                    <span>Lettera, nome in corsivo e base con il nostro logo. Pulita ed elegante.</span>
+                  </span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="versione" value="decorata" checked>
+                  <span class="version-card">
+                    <strong>Decorata</strong>
+                    <span class="version-price">35 €</span>
+                    <span>In più: decorazioni a rilievo sulla lettera e un personaggio sulla base.</span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="step name-field">
+              <label class="step-title" for="nome"><span class="step-number">2</span>Scrivi il nome</label>
+              <input id="nome" name="nome" type="text" value="Salvatore" maxlength="14" autocomplete="off" autocapitalize="words" spellcheck="false" aria-describedby="nome-meta">
+              <div class="field-meta" id="nome-meta">
+                <span id="nome-error" class="field-error" aria-live="polite"></span>
+                <span id="nome-counter">9/14</span>
+              </div>
+            </div>
+
+            <fieldset class="step">
+              <legend><span class="step-number">3</span>Scegli lo stile</legend>
+              <p class="sub-label">Scritta del nome</p>
+              <div class="chip-grid" id="font-nome-group">
+                <label class="choice">
+                  <input type="radio" name="fontNome" value="tondo" checked>
+                  <span class="chip"><span class="chip-sample" data-sample="nome" style="font-family: 'ADL Tondo'">Salvatore</span><span class="chip-label">Tondo</span></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="fontNome" value="elegante">
+                  <span class="chip"><span class="chip-sample" data-sample="nome" style="font-family: 'ADL Elegante'">Salvatore</span><span class="chip-label">Elegante</span></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="fontNome" value="delicato">
+                  <span class="chip"><span class="chip-sample" data-sample="nome" style="font-family: 'ADL Delicato'">Salvatore</span><span class="chip-label">Delicato</span></span>
+                </label>
+              </div>
+              <p class="sub-label">Lettera</p>
+              <div class="chip-grid">
+                <label class="choice">
+                  <input type="radio" name="fontLettera" value="classica" checked>
+                  <span class="chip"><span class="chip-sample" data-sample="lettera" style="font-family: 'ADL Classica'">S</span><span class="chip-label">Classica</span></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="fontLettera" value="morbida">
+                  <span class="chip"><span class="chip-sample" data-sample="lettera" style="font-family: 'ADL Morbida'">S</span><span class="chip-label">Morbida</span></span>
+                </label>
+                <label class="choice">
+                  <input type="radio" name="fontLettera" value="decisa">
+                  <span class="chip"><span class="chip-sample" data-sample="lettera" style="font-family: 'ADL Decisa'">S</span><span class="chip-label">Decisa</span></span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="step">
+              <legend><span class="step-number">4</span>Scegli i colori</legend>
+              <p class="sub-label" id="colore-lettera-label">Colore della lettera</p>
+              <div class="swatch-row" id="colore-lettera-group" role="radiogroup" aria-labelledby="colore-lettera-label"></div>
+              <p class="swatch-name" id="colore-lettera-name"></p>
+              <p class="sub-label" id="colore-accenti-label">Colore di nome, base e decorazioni</p>
+              <div class="swatch-row" id="colore-accenti-group" role="radiogroup" aria-labelledby="colore-accenti-label"></div>
+              <p class="swatch-name" id="colore-accenti-name"></p>
+            </fieldset>
+
+            <fieldset class="step" id="step-decorazioni">
+              <legend><span class="step-number">5</span>Scegli le decorazioni</legend>
+              <p class="step-hint">Le decorazioni sono a rilievo sulla lettera, nel colore di nome e base.</p>
+              <p class="sub-label">Tema</p>
+              <div class="chip-grid" id="tema-group"></div>
+              <p class="sub-label">Personaggio sulla base</p>
+              <div class="chip-grid" id="personaggio-group"></div>
+            </fieldset>
+
+            <div class="step notes">
+              <label class="step-title" for="note"><span class="step-number" id="note-number">6</span>Note (facoltative)</label>
+              <textarea id="note" name="note" maxlength="300" placeholder="Per esempio: la data di nascita da aggiungere, una consegna entro una certa data…"></textarea>
+            </div>
+
+            <div class="summary" id="riepilogo">
+              <div class="summary-head">
+                <span>Il tuo ordine</span>
+                <strong class="summary-price" id="summary-price">35 €</strong>
+              </div>
+              <ul class="summary-list" id="summary-list"></ul>
+              <a class="button button-primary" id="order-button" href="https://wa.me/393446498901" target="_blank" rel="noopener noreferrer">
+                <svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>
+                Ordina su WhatsApp
+              </a>
+              <p class="summary-note">Si apre WhatsApp con il riepilogo già scritto. Confermiamo insieme tempi e consegna prima di stampare.</p>
+            </div>
+
+            <section class="lab" id="lab" hidden aria-labelledby="lab-title">
+              <h2 id="lab-title">Laboratorio: parametri OpenSCAD</h2>
+              <p>Salva il file nella cartella <code>modello/ordini</code> del progetto e aprilo con OpenSCAD, oppure esporta i pezzi con <code>modello/esporta.sh</code>.</p>
+              <textarea id="lab-output" readonly aria-label="Parametri OpenSCAD"></textarea>
+              <div class="lab-actions">
+                <button class="button button-primary" id="lab-download" type="button">Scarica file .scad</button>
+                <button class="button button-outline" id="lab-copy" type="button">Copia</button>
+              </div>
+            </section>
+          </form>
+
+          <div class="facts">
+            <p class="fact"><strong>Circa 16 cm</strong><span>di altezza, base inclusa</span></p>
+            <p class="fact"><strong>Stampata a mano</strong><span>a Reggio Calabria, in PLA</span></p>
+            <p class="fact"><strong>In tutta Italia</strong><span>consegna da concordare</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <strong>artigianidel3d · Stampa 3D a Reggio Calabria</strong>
+        <span>Oggetti stampati in 3D su richiesta, per clienti in tutta Italia.</span>
+      </div>
+      <nav class="footer-links" aria-label="Collegamenti a piè di pagina">
+        <a href="/">Home</a>
+        <a href="/#collezione">Collezione</a>
+        <a href="https://wa.me/393446498901?text=Ciao%21%20Vorrei%20informazioni%20sulla%20lettera%20con%20nome%20personalizzata." target="_blank" rel="noopener noreferrer">WhatsApp +39 344 649 8901</a>
+      </nav>
+      <span>© 2026 artigianidel3d</span>
+    </div>
+  </footer>
+
+  <div class="mobile-order" aria-hidden="true">
+    <strong id="mobile-price">35 €</strong>
+    <a class="button button-primary" id="mobile-order-button" href="#riepilogo" tabindex="-1">Vai all’ordine</a>
+  </div>
+
+  <script src="js/configuratore.js" defer></script>
+</body>
+</html>

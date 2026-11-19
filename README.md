@@ -33,6 +33,7 @@ Il risultato è un sito statico ad alte prestazioni, pubblicabile su Netlify, co
 - Aggiungere, modificare o eliminare prodotti già pubblicati.
 - Caricare immagini prodotto in modo sicuro.
 - Mostrare prezzi fissi oppure con dicitura “A partire da”.
+- Personalizzare una lettera con nome in un configuratore con anteprima, collegato a un modello 3D parametrico originale (OpenSCAD).
 - Monitorare le visite con analytics privacy-friendly.
 
 ## Design e UX

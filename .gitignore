@@ -6,3 +6,7 @@ config.js
 .netlify/
 dist/
 *.zip
+
+# Ordini dei clienti e file esportati: contengono nomi reali
+modello/ordini/*
+!modello/ordini/esempio-*.scad

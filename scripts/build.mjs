@@ -10,7 +10,7 @@ const outputDirectory = join(projectRoot, "dist");
 const SITE_URL = "https://artigianidel3d.it";
 const PRODUCT_IMAGES_BUCKET = "product-images";
 const WHATSAPP_NUMBER = "393446498901";
-const SCRIPT_FILES = ["site.js", "admin.js"];
+const SCRIPT_FILES = ["site.js", "admin.js", "configuratore.js"];
 
 async function loadLocalEnvironment() {
   const environmentPath = join(projectRoot, ".env");
@@ -216,12 +216,13 @@ async function buildIndex(scriptPaths, supabaseUrl, products) {
 }
 
 function buildSitemap(lastModified) {
+  const urls = [`${SITE_URL}/`, `${SITE_URL}/lettera-personalizzata`];
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>${SITE_URL}/</loc>
+${urls.map((url) => `  <url>
+    <loc>${url}</loc>
     <lastmod>${lastModified}</lastmod>
-  </url>
+  </url>`).join("\n")}
 </urlset>
 `;
 }
@@ -251,6 +252,7 @@ const [scriptPaths, products] = await Promise.all([
 
 const indexHtml = await buildIndex(scriptPaths, supabaseUrl, products);
 const adminHtml = applyScriptPaths(await readFile(join(projectRoot, "admin.html"), "utf8"), scriptPaths);
+const letterHtml = applyScriptPaths(await readFile(join(projectRoot, "lettera-personalizzata.html"), "utf8"), scriptPaths);
 
 // La CSP autorizza soltanto il progetto Supabase configurato, non qualsiasi *.supabase.co.
 const headers = (await readFile(join(projectRoot, "_headers"), "utf8"))
@@ -265,6 +267,7 @@ const browserConfig = `window.APP_CONFIG = Object.freeze(${JSON.stringify({
 await Promise.all([
   writeFile(join(outputDirectory, "index.html"), indexHtml, "utf8"),
   writeFile(join(outputDirectory, "admin.html"), adminHtml, "utf8"),
+  writeFile(join(outputDirectory, "lettera-personalizzata.html"), letterHtml, "utf8"),
   writeFile(join(outputDirectory, "_headers"), headers, "utf8"),
   writeFile(join(outputDirectory, "sitemap.xml"), buildSitemap(new Date().toISOString().slice(0, 10)), "utf8"),
   writeFile(join(outputDirectory, "config.js"), browserConfig, "utf8")

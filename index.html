@@ -1085,6 +1085,62 @@
       font-size: 0.86rem;
     }
 
+    /* ---------- Lettera personalizzata ---------- */
+
+    .promo-letter {
+      padding: 0 0 104px;
+    }
+
+    .promo-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      align-items: center;
+      gap: 40px;
+      overflow: hidden;
+      padding: 48px;
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(circle at 90% 10%, rgba(143, 211, 224, 0.5), transparent 22rem),
+        radial-gradient(circle at 70% 100%, rgba(244, 182, 198, 0.45), transparent 20rem),
+        var(--card);
+      border: 1px solid var(--line);
+    }
+
+    .promo-panel h2 {
+      margin-top: 4px;
+    }
+
+    .promo-prices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0 28px;
+      list-style: none;
+    }
+
+    .promo-prices li {
+      padding: 10px 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    .promo-prices strong {
+      font-weight: 800;
+    }
+
+    .promo-visual {
+      display: grid;
+      place-items: center;
+      min-height: 260px;
+    }
+
+    .promo-visual svg {
+      width: min(100%, 300px);
+      height: auto;
+    }
+
     /* ---------- Footer ---------- */
 
     footer {
@@ -1177,6 +1233,16 @@
 
       .nav-link {
         display: none;
+      }
+
+      .promo-panel {
+        grid-template-columns: 1fr;
+        padding: 36px 28px;
+      }
+
+      .promo-visual {
+        min-height: 0;
+        order: -1;
       }
     }
 
@@ -1433,6 +1499,7 @@
       </a>
       <nav class="nav-links" aria-label="Navigazione principale">
         <a class="nav-link" href="#servizi">Servizi</a>
+        <a class="nav-link" href="lettera-personalizzata">Lettera col nome</a>
         <a class="nav-link" href="#collezione">Collezione</a>
         <a class="nav-link" href="#come-funziona">Come funziona</a>
         <a class="nav-link" href="#faq">FAQ</a>
@@ -1509,6 +1576,41 @@
             <h3>Piccole serie</h3>
             <p>Più copie dello stesso oggetto per eventi, attività e collezioni limitate.</p>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="promo-letter" aria-labelledby="promo-title">
+      <div class="container">
+        <div class="promo-panel">
+          <div>
+            <p class="section-kicker">Novità · Personalizzala tu</p>
+            <h2 id="promo-title">Lettera con nome, stampata in 3D per la cameretta</h2>
+            <p class="section-intro">Scegli iniziale, scritta, colori e decorazioni: l’anteprima si aggiorna mentre scrivi. Un regalo perfetto per nascite, battesimi e compleanni.</p>
+            <ul class="promo-prices">
+              <li>Essenziale <strong>25 €</strong></li>
+              <li>Decorata con orsetto <strong>35 €</strong></li>
+            </ul>
+            <a class="button button-primary" href="lettera-personalizzata">
+              Crea la tua lettera
+              <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </a>
+          </div>
+          <div class="promo-visual" aria-hidden="true">
+            <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="150" cy="262" rx="120" ry="20" fill="#c9b08a"/>
+              <ellipse cx="150" cy="254" rx="120" ry="20" fill="#d8c3a0"/>
+              <text x="160" y="250" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="250" font-weight="700" fill="#73b7c6">A</text>
+              <text x="152" y="245" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="250" font-weight="700" fill="#8fd3e0">A</text>
+              <text x="150" y="168" text-anchor="middle" font-family="'Brush Script MT', 'Segoe Script', cursive" font-size="54" fill="#b89c70">Anna</text>
+              <text x="148" y="165" text-anchor="middle" font-family="'Brush Script MT', 'Segoe Script', cursive" font-size="54" fill="#f2e6d0">Anna</text>
+              <g fill="#f2e6d0">
+                <path d="m92 92 3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1Z"/>
+                <path d="m206 204 2 5 5 1-4 3 1 5-4-3-4 3 1-5-4-3 5-1Z"/>
+                <circle cx="190" cy="104" r="7"/><circle cx="199" cy="100" r="9"/><circle cx="208" cy="105" r="7"/>
+              </g>
+            </svg>
+          </div>
         </div>
       </div>
     </section>
@@ -1655,6 +1757,7 @@
       </div>
       <nav class="footer-links" aria-label="Collegamenti a piè di pagina">
         <a href="#servizi">Servizi</a>
+        <a href="lettera-personalizzata">Lettera col nome</a>
         <a href="#collezione">Collezione</a>
         <a href="#come-funziona">Come funziona</a>
         <a href="#faq">FAQ</a>

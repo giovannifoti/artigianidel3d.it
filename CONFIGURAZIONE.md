@@ -201,3 +201,15 @@ Per aggiungere o rimuovere prodotti visita `/admin.html`. Non devi aprire
 Supabase o Netlify per la normale gestione del catalogo. Supabase servirà solo
 per cambiare la password, autorizzare un altro amministratore o controllare il
 database.
+
+## Lettera con nome personalizzata
+
+La pagina `/lettera-personalizzata` è un configuratore: il cliente sceglie
+versione (Essenziale 25 €, Decorata 35 €), nome, stile, colori, decorazioni e
+personaggio, vede l'anteprima e invia l'ordine su WhatsApp. Non usa Supabase:
+prezzi, colori e opzioni si cambiano in cima a `js/configuratore.js`, poi serve
+un nuovo deploy.
+
+Il modello 3D da stampare si genera con OpenSCAD dal file
+`modello/lettera-nome.scad`. Il procedimento completo, dal messaggio del cliente
+ai file da stampare, è descritto in `modello/LEGGIMI.md`.
